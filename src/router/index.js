@@ -14,10 +14,16 @@ const routes = [
       import(/* webpackChunkName: "user" */ "../views/ListView.vue"),
   },
   {
-    path: "/user/findById",
-    name: "SelectView",
+    path: "/user/signIn",
+    name: "SignIn",
     component: () =>
-      import(/* webpackChunkName: "user" */ "../views/SelectView.vue"),
+      import(/* webpackChunkName: "user" */ "../views/User/SignIn.vue"),
+  },
+  {
+    path: "/user/signUp",
+    name: "signUp",
+    component: () =>
+      import(/* webpackChunkName: "user" */ "../views/User/SignUp.vue"),
   },
   {
     path: "/user/editById",

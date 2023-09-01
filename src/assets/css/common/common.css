@@ -1,0 +1,12 @@
+/* css초기화 */
+@import url(reset.css);
+
+a{
+    color: black;
+    text-decoration: none;
+}
+
+button:hover{
+    cursor: pointer;
+}
+

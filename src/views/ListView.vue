@@ -3,6 +3,7 @@
   	  <h1 class="display-1 text-center">사용자 목록</h1>
   	  <div class="btn-group">
   	    <a href="/user/save" class="btn btn-primary">사용자 추가</a>
+         <button type="button" class="btn btn-primary" @click="test">test</button>
   	  </div>
   	  <table class="table table-hover mt-3">
   	    <thead class="table-dark">
@@ -67,6 +68,15 @@ export default {
     //암호화 => 데이터를 인코딩해서 암호화시킴
     base64(user){
       return window.btoa(encodeURIComponent(JSON.stringify(user)))
+    },
+    test() {
+      axios.request('/Test')
+        .then((response) => {
+          console.log(response)
+          this.result = response.data.result
+        }).catch((error) => {
+          console.log(error)
+        })
     }
   }
 }

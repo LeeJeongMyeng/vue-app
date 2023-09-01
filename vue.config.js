@@ -2,8 +2,12 @@ const { defineConfig } = require('@vue/cli-service')
 module.exports = defineConfig({
   transpileDependencies: true,
 
-  outputDir: '../sample/src/main/resources/static'
-})
+  outputDir: "../miniproject/sample/src/main/resources/static",
+  indexPath: "../static/index.html",
+  devServer: {
+    proxy: "http://localhost:8080",
+  }
+});
 
 
 // const  target = 'http://localhost:8080'
