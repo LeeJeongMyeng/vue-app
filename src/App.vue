@@ -1,15 +1,18 @@
 <template>
   <div>
-    <!-- <Sidebar></Sidebar>  -->
-    <Header />
-     <hr>
+    <!-- <nav>
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link> |
+      <router-link to="/user">UserList</router-link> |
+      <router-link to="/user/findById">UserSelect</router-link> |
+      <router-link to="/user/editById">UserUpdate</router-link> |
+      <router-link to="/user/save">UserCreate</router-link>
+    </nav> -->
     <router-view/>
-    
   </div>
 </template>
 
 <script>
-import Header from './components/Header.vue';
 
   export default {
     created() {
@@ -24,17 +27,11 @@ import Header from './components/Header.vue';
       base64(user){
         return JSON.parse(decodeURIComponent(window.atob(user)))
       }
-    },
-    components:{
-    Header
-}
+    }
   }
 </script>
 
 <style>
-@import url(assets/css/common/common.css);
- hr{
-    width: 95%;
-    border: 2px solid rgb(206, 206, 206,0.2);
-  }
+@import url(./assets/css/common/common.css);
+
 </style>
