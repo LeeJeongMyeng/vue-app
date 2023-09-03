@@ -1,19 +1,12 @@
 <template>
   <div>
-    <!-- <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link> |
-      <router-link to="/user">UserList</router-link> |
-      <router-link to="/user/findById">UserSelect</router-link> |
-      <router-link to="/user/editById">UserUpdate</router-link> |
-      <router-link to="/user/save">UserCreate</router-link>
-    </nav> -->
+    <Header/>
     <router-view/>
   </div>
 </template>
 
 <script>
-
+  import Header from './components/Header.vue'
   export default {
     created() {
       const user = sessionStorage.getItem('setUser')
@@ -27,6 +20,9 @@
       base64(user){
         return JSON.parse(decodeURIComponent(window.atob(user)))
       }
+    },
+    components:{
+      'Header' : Header
     }
   }
 </script>

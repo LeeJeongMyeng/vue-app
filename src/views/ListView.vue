@@ -69,15 +69,15 @@ export default {
     base64(user){
       return window.btoa(encodeURIComponent(JSON.stringify(user)))
     },
-    test() {
-      axios.request('/Test')
-        .then((response) => {
-          console.log(response)
-          this.result = response.data.result
-        }).catch((error) => {
-          console.log(error)
-        })
-    }
+    // test() {
+    //   axios.request('/Test')
+    //     .then((response) => {
+    //       console.log(response)
+    //       this.result = response.data.result
+    //     }).catch((error) => {
+    //       console.log(error)
+    //     })
+    // }
   }
 }
 </script>
