@@ -37,22 +37,31 @@
                 
                 <tr>
                     <th> 핸드폰번호  </th>
-                    <td> <input type="text" id="SignUp_phonenumber" v-model="User.phoneNumber" :class="active_css.phoneNumber" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="11"> </td>
+                    <td> <input type="text" id="SignUp_phonenumber" v-model="User.phoneNumber" :class="active_css.phoneNumber" @keyup="Check_PN_Regular" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" minlength="10" maxlength="11" > </td>
                 </tr>
-                <tr>
+                <tr class="addressbox">
                     <th> 주소 </th>
-                    <td> <input type="text" id="SignUp_address" placeholder="API교체하기"> </td>
+                    <td> 
+                    <div style="display: flex;">
+                    <input type="text" id="sample6_postcode" placeholder="우편번호" readonly>
+                    <input type="button" id="sample6_btn" @click="sample6_execDaumPostcode()" value="우편번호 찾기"><br>
+                    </div> 
+                    <input type="text" id="sample6_address" placeholder="주소" readonly><br>
+                    <input type="text" id="sample6_detailAddress" placeholder="상세주소">
+                    <input type="text" id="sample6_extraAddress" placeholder="참고항목" readonly>
+                    </td>
                 </tr>
                 <tr >
                     <th> 가입유형  </th>
                     <td>
-                        <input type="radio" name ="bnCheck" id="bnCkeckT" value="0" @change="bnCheck($event)" checked>일반유저
-                       <input type="radio" name ="bnCheck" id="bnCkeckF" value="1" @change="bnCheck($event)">사업자유저 
+                        <input type="radio" name ="bnCheck" id="bnCkeckT" value="0"  @change="bnCheck($event)" checked>일반회원
+                       <input type="radio" name ="bnCheck" id="bnCkeckF" value="1"  @change="bnCheck($event)">사업자회원
                     </td>
                 </tr>
-                <tr id="SignUp_bn_tr" v-show="User.bnCheck">
+                <tr id="SignUp_bn_tr" v-show="Common.open_bnNumber">
                     <th> 사업자번호 </th>
                     <td> <input type="text" id="SignUp_bn" v-model="User.bnNumber" :class="active_css.bnNumber"> </td>
+                    <td> <button @click="Check_Business_Number">사업자번호확인</button></td>
                 </tr>
             </table>
             
@@ -82,16 +91,21 @@ export default {
                  , Email_Code : ''
                  , frrn : ''
                  , brrn : ''
+                 , open_bnNumber : false
             },
             User: { email: '' //이메일
                     , password: '' //패스워드
                     , password2: '' //패스워드확인
                     , name: '' //이름
-                    , personalNumber: '' //주민번호
-                    , phoneNumber:'' //핸드폰번호
-                    , addres:'' //주소
-                    , bnCheck:'' //가입유형(사업자유무)
-                    , bnNumber:'' 
+                    , personalNumber : '' //주민번호
+                    , phoneNumber : '' //핸드폰번호
+                    , postcode : '' //우편번호
+                    , address : '' //주소
+                    , extraAddress : '' // 부가주소
+                    , detailAddress : '' // 상세주소
+                    , bnCheck : false //가입유형(사업자유무)
+                    , bnNumber : ''
+                    , userno : 'N'
                 },
 
             //?
@@ -114,15 +128,14 @@ export default {
                 , name: false  //이름
                 , personalNumber: false  //주민번호
                 , phoneNumber: false  //핸드폰번호
-                , addres: false  //주소
-                , bnCheck: false  //가입유형(사업자유무)
-                , bnNumber: false
+                , address: false  //주소
+                , bnCheck: true  //가입유형(사업자유무)
+                //, bnNumber: false
             }
             
         }
     },
     created() {
-        
     },
     methods: {
         //회원가입 취소
@@ -228,10 +241,11 @@ export default {
                     console.log(res)
                     if(res.data.checkNum == 0){
 
-                       this.CheckInfo.email = true;
+                       
                        //alert('사용 가능한 이메일입니다.')
                         // 이메일 전송
                        this.Send_Email(UserEmail);
+                        $('#SignUp_email').attr('readonly',true);
 
                     }else{
                         alert('중복된 이메일입니다. 다시 확인부탁드립니다.')
@@ -291,7 +305,10 @@ export default {
                alert('인증확인되었습니다.')
                 $('#SignUp_email_code').attr('readonly',true);
                 this.active_css.email_Code = 'active_valid';
-                this.User.email = true;
+                this.CheckInfo.email = true;
+            }else{
+                alert('인증번호가 일치하지않습니다. 다시확인 부탁드립니다.')
+                this.active_css.email_Code = 'active_invalid';
             }
             
 
@@ -317,33 +334,138 @@ export default {
             if(Check){
                 this.active_css.password2 = 'active_valid';
                 this.CheckInfo.password2 = true;
+                console.log('1차:'+this.CheckInfo.password + ': 2차:' + this.CheckInfo.password2);
             }else{
                 this.active_css.password2 = 'active_invalid';
                 this.CheckInfo.password2 = false;
+                console.log('1차:' + this.CheckInfo.password + ': 2차:' + this.CheckInfo.password2);
+
             }
 
         },
+        //핸드폰번호
+        Check_PN_Regular(){
+            const PhoneNumber = this.User.phoneNumber;
+            const Check = this.Check_Regular_Expression('PhoneNumber', PhoneNumber);
 
+            if(Check){
+                this.active_css.phoneNumber = 'active_valid';
+                this.CheckInfo.phoneNumber = true
+            }else{
+                this.active_css.phoneNumber = 'active_invalid';
+                 this.CheckInfo.phoneNumber = false
+            }
+        },
+        //주소API
+        sample6_execDaumPostcode(){
+            
+                 new daum.Postcode({
+                oncomplete: function (data) {
+                    // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
 
+                    // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                    // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                    var addr = ''; // 주소 변수
+                    var extraAddr = ''; // 참고항목 변수
 
+                    //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                    if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                        addr = data.roadAddress;
+                    } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                        addr = data.jibunAddress;
+                    }
 
+                    // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+                    if (data.userSelectedType === 'R') {
+                        // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+                        // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+                        if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+                            extraAddr += data.bname;
+                        }
+                        // 건물명이 있고, 공동주택일 경우 추가한다.
+                        if (data.buildingName !== '' && data.apartment === 'Y') {
+                            extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                        }
+                        // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+                        if (extraAddr !== '') {
+                            extraAddr = ' (' + extraAddr + ')';
+                        }
+                        // 조합된 참고항목을 해당 필드에 넣는다.
+                        document.getElementById("sample6_extraAddress").value = extraAddr;
 
+                    } else {
+                        document.getElementById("sample6_extraAddress").value = '';
+                    }
 
+                    // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                    document.getElementById('sample6_postcode').value = data.zonecode;
+                    document.getElementById("sample6_address").value = addr;
+                    // 커서를 상세주소 필드로 이동한다.
+                    document.getElementById("sample6_detailAddress").focus();
+                }
+            }).open();
+                    
+            
+            
+
+        },
+        Check_address(){
+            return this.CheckInfo.address = $('#sample6_postcode').val() != '';
+        },
+        //주소API 실행 이후, VUE DATA에 할당
+        Success_Address(){
+            this.CheckInfo.address = true;
+            this.User.postcode = $('#sample6_postcode').val();
+            this.User.address = $('#sample6_address').val();
+            this.User.extraAddress = $('#sample6_extraAddress').val();
+            this.User.detailAddress = $('#sample6_detailAddress').val();
+        },
+        // Success_detailAddress(){
+        //     
+        // },
 
 
 
         //Method executed when selecting a 'input[type=radio]'
         bnCheck(event) {
             if (event.target.value == 0) {
+                //회원가입시 확인할 사업자부분 check
+                this.CheckInfo.bnCheck = true;
+                // 회원가입시 DB에 들어갈 Boolean데이터입력
                 this.User.bnCheck = false;
+                // 일반,사업자 radio선택 시, 사업자번호 확인하는칸 활성화 담당
+                this.Common.open_bnNumber = false;
                 this.User.bnNumber = '';
                 $('#SignUp_bn').attr("required", false);
+                this.User.userno = 'N';
             } else {
-                this.User.bnCheck = true;
+                this.CheckInfo.bnCheck = false;
+                this.User.bnNumber = '';
+                this.Common.open_bnNumber = true;
+                this.User.userno = 'B';
                 $('#SignUp_bn').attr("required", true);
             }
 
-            this.User.bnCheck = event.target.value == 0 ? false : true;
+        },
+        //사업자번호 확인 API
+        Check_Business_Number(){
+            var data = { "b_no": [ this.User.bnNumber.replaceAll('-','')] };
+
+            axios.post("https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=qaJs1GHTyoLGcztYwOmuuQrV8qrgsos8R3r%2FpIQdyqX2HWAX%2Fy8tlU33sKXL0L0XkV%2FBAGqk8BT8KMVPoZn25g%3D%3D", data)
+                .then((result) => {
+                    console.log(result.data.data[0].b_stt);
+                    const b_stt = result.data.data[0].b_stt;
+                    if(b_stt == '계속사업자'){
+                        this.CheckInfo.bnCheck = true;
+                       // this.CheckInfo.bnNumber = true;
+                        this.User.bnCheck = true;
+                        alert('사업자등록 확인 되었습니다.')
+                        $('#SignUp_bn').attr('readonly',true);
+                    }else{
+                        alert('없는 사업자 번호입니다. 다시한번 확인 부탁드립니다.')
+                    }
+                })
+                .catch((err) => console.log(err))
         },
         //정규식검사 메서드
         Check_Regular_Expression(key, value) {
@@ -370,6 +492,9 @@ export default {
                 } else {
                     result = true;
                 }
+            } else if('PhoneNumber'){
+                Regular_Expression = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
+                result = ((value.length == 11 || value.length ==10) && (Regular_Expression.test(value)));
             }
 
             return result;
@@ -377,17 +502,50 @@ export default {
         },
         //When clicked 'SignUp Complete'.
         Check_SignUp_form(){
-            const ChekcInfo = this.CheckInfo;
-            const CheckInfo2 = Object.values(ChekcInfo);
-            CheckInfo2.forEach((value,index,array) => {
-                console.log(value);
-            })
-           
             
-        }
-        
-        
+            
+            //주소api는 건들수가 없기에 여기서 유효성확인
+            //주소할당 => 주소api사용했을 때 vue data에 적용이 안되더라,,,
+            if(this.Check_address()) this.Success_Address();
 
+            //유효성검사 전부 완료가 되었는지 확인
+             const ChekcInfo = this.CheckInfo;
+            const CheckInfo2_key = Object.keys(this.CheckInfo);
+
+            const UserInf = this.User;
+            const UserInf_kyes = Object.keys(this.CheckInfo);
+
+            //데이터베이스에 입력될 데이터들 확이
+            UserInf_kyes.forEach(key => {
+                console.log('User',key, ':', UserInf[key]);
+            })
+
+            // 유효성검사 => data.CheckInfo boolean전체 확인
+            let totCheck = true;
+            for(var i = 0; i< CheckInfo2_key.length; i++){
+                console.log('CheckInfo', CheckInfo2_key[i], ':', ChekcInfo[CheckInfo2_key[i]]);
+                if(ChekcInfo[CheckInfo2_key[i]] ==false) {
+                    totCheck = false;
+                    
+                };
+            }
+
+            //위 검사에서 false가 나올경우 취소
+            if(!totCheck) {
+                alert('입력 칸을 모두 채워주세요.')
+                return false;
+            }
+            // 여기까지 올경우 insert진행
+            axios.post('/ctg/Ins_Ctg_Member', this.User)
+                .then((res) => {
+                    console.log(res)
+
+                    alert('회원가입이 완료 되었습니다. 로그인 페이지로 이동합니다.')
+                    this.$router.push({ name: 'SignIn' });
+
+                })
+                .catch((err) => console.log(err))
+        }
         
     }
 }
@@ -435,7 +593,7 @@ export default {
 
 .signUpContainer .signUpBox .signUp_Input {
     position: absolute;
-    top: 13%;
+    top: 17%;
     left: 19%;
     padding: 26px;
     border-radius: 9px;
@@ -474,7 +632,7 @@ export default {
 
 .signUpContainer .SignUp_btn {
     position: absolute;
-    top: 132%;
+    top: 105%;
     left: 7%;
     /* border-radius: 5px; */
     font-size: 20px;
@@ -493,6 +651,15 @@ export default {
     /* text-shadow: 1px 1px 1px gray; */
 }
 
+.signUp_Input .addressbox  #sample6_postcode{
+    width:100px;
+    margin: 14px 10px 0px 24px;
+}
+
+.signUp_Input .addressbox #sample6_btn{
+    width:100px;
+    margin: 17px 0 0 0;
+}
 
 
 /* ============================================================================================================================================== */
@@ -521,10 +688,10 @@ export default {
 /* 유효성 검사용 스타일 */
 .active_invalid{
     
-    box-shadow: 0px 0px 3px rgb(255, 0, 0);
+    box-shadow: 0px 0px 4px rgb(255, 0, 0);
 }
 
 .active_valid{
-     box-shadow: 0px 0px 3px rgb(57, 182, 80);
+     box-shadow: 0px 0px 6px rgb(57, 182, 80);
 }
 </style>

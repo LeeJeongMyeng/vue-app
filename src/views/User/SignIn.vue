@@ -16,7 +16,7 @@
                 <input type="password" id="SignIn_pwd"><br>
                 <button type="button" class="SignIn_btn">로그인</button>
             </div>
-            <button type="button" class="SignUp_btn">회원가입</button>
+            <button type="button" class="SignUp_btn" @click="Go_To_SignUp">회원가입</button>
         </div>
         <div class="imgBox">
            <img src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/signin-ill.jpg" alt="">
@@ -27,7 +27,20 @@
 
 <script>
 export default {
-    name : "signIn"
+    name : "signIn",
+    data() {
+        return {
+
+        }
+    },
+    created(){
+
+    },
+    methods: {
+        Go_To_SignUp(){
+             this.$router.push({ name: 'signUp' })
+        }
+    }
 }
 </script>
 
