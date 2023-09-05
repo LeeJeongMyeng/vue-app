@@ -9,10 +9,14 @@
                 <li><router-link to="/user/signIn">플리마켓</router-link></li>
                 <li><router-link to="/user/signIn">공지사항</router-link></li>
                 <li><router-link to="/user/signIn">문의글</router-link></li>
-                <div class="rightNav">
+                <!-- 로그인아이디가 있으면 보여진다. -->
+                <div class="rightNav" v-if="!$store.state.account.member">
                     <li><router-link to="/user/signIn">로그인</router-link></li>
                     <li><router-link to="/user/signUp">회원가입</router-link></li>
-                    <li>내정보</li>
+                </div>
+                <div class="rightNav" v-else>
+                        <li><router-link to="/user/signIn" @click="SignIn_Ctg_Member">로그아웃</router-link></li>
+                        <li>내정보</li>
                 </div>
             </ul>
            
@@ -20,8 +24,27 @@
 </template>
 
 <script>
+import axios from "axios";
+import store from '@/store';
 export default {
+    name: "Header",
+    data() {
+        return {
+           
+        }
+    },
+    created() {
 
+    },
+    methods: {
+       SignIn_Ctg_Member(){
+        
+         store.commit('setAccount', 0);
+            sessionStorage.removeItem("member");
+            //여기에 페이지 이동 넣어야함
+            window.alert('로그아웃 되었습니다.');
+       }
+    }
 }
 </script>
 
