@@ -6,7 +6,7 @@
         </div>
 
              <ul class="nav" id="header-nav1">
-                <li><router-link to="/user/signIn">플리마켓</router-link></li>
+                <li><router-link to="/">플리마켓</router-link></li>
                 <li><router-link to="/user/signIn">공지사항</router-link></li>
                 <li><router-link to="/user/signIn">문의글</router-link></li>
                 <!-- 로그인아이디가 있으면 보여진다. -->
@@ -15,7 +15,7 @@
                     <li><router-link to="/user/signUp">회원가입</router-link></li>
                 </div>
                 <div class="rightNav" v-else>
-                        <li><router-link to="/user/signIn" @click="SignIn_Ctg_Member">로그아웃</router-link></li>
+                        <li><router-link to="/user/signIn" @click="Logout_Ctg_Member">로그아웃</router-link></li>
                         <li>내정보</li>
                 </div>
             </ul>
@@ -37,12 +37,18 @@ export default {
 
     },
     methods: {
-       SignIn_Ctg_Member(){
-        
-         store.commit('setAccount', 0);
-            sessionStorage.removeItem("member");
-            //여기에 페이지 이동 넣어야함
-            window.alert('로그아웃 되었습니다.');
+       Logout_Ctg_Member(){
+        axios.post('/ctg/logout')
+                .then((res) => {
+                    console.log(res)
+                    store.commit('setAccount', null);
+                    sessionStorage.removeItem("member");
+                    //여기에 페이지 이동 넣어야함
+                    window.alert('로그아웃 되었습니다.');
+                    
+                })
+                .catch((err) => console.log(err))
+         
        }
     }
 }

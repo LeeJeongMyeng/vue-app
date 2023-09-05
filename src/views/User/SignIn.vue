@@ -54,11 +54,11 @@ export default {
                     console.log(res.data)
 
                     //store.js의 mutations로 받은 데이터를 할당해줌
-                    store.commit('setAccount',res.data.Member);
-                    sessionStorage.setItem("member",res.data.Member);
-                    //여기에 페이지 이동 넣어야함
-                    window.alert('로그인되었습니다.');
+                    store.commit('setAccount',res.data);
+                    sessionStorage.setItem("member",res.data);
                     
+                    window.alert('로그인되었습니다.');
+                    this.$router.push({ name: 'home' })
 
                 })
                 .catch((err) => 

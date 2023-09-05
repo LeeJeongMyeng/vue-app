@@ -4,7 +4,7 @@ module.exports = defineConfig({
 
   outputDir: "../miniproject/sample/src/main/resources/static",
   devServer: {
-    proxy: "http://localhost:8080",
+    proxy: "http://localhost:8081",
     //changeOrigin: true
   }
 });

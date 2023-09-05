@@ -15,6 +15,6 @@ const app = createApp(App)
 app.config.globalProperties.axios=axios;
 // app.use(router).use(store).use(BootstrapVue3).mount("#app");
 app.use(router).use(store).mount("#app");
-axios.defaults.baseURL='http://localhost:8080'
+axios.defaults.baseURL='http://localhost:8081'
 
 
