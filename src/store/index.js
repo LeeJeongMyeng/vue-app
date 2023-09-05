@@ -3,12 +3,15 @@ import {createStore} from "vuex";
 export default createStore({
     state(){
         return{
-            user:{}
+            account:{
+                member : {}
+            }
         }
     },
+    //state값을 변경하는 로직
     mutations:{
-        setUser(state,value){
-            state.user = value;
+        setAccount(state,payload){
+            state.account.member = payload;
         }
     }
 })

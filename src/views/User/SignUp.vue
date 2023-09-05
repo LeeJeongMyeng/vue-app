@@ -7,15 +7,15 @@
             <table>
                 <tr>
                     <th><span></span> 성함 </th>
-                    <td> <input type="text" id="SignUp_name" placeholder="홍길동" v-model="User.name" :class="active_css.name" > </td>
+                    <td> <input type="text" id="SignUp_name" placeholder="홍길동" v-model="User.name" :class="active_css.name" autocomplete=”off”> </td>
                 </tr>
                 <tr>
                     <th> 주민등록번호 </th>
                     <td> <input type="text" id="SignUp_frrn" placeholder="앞 6자리" v-model="Common.frrn" :class="active_css.frrn" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="6">
                          -
-                         <input type="text" id="SignUp_brrn" placeholder="뒤 7자리" v-model="Common.brrn" maxlength="7" :class="active_css.brrn" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"> </td>
+                         <input type="text" id="SignUp_brrn" placeholder="뒤 7자리" v-model="Common.brrn" maxlength="7" :class="active_css.brrn" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" autocomplete=”off”> </td>
                     <td> <button @click="Check_SignUp_name">중복확인</button></td>
-                    </tr>
+                </tr>
                 <tr>
                     <th>이메일</th>
                     <td> <input type="text" id="SignUp_email" placeholder="Enter your Email" v-model="User.email" :class="active_css.email" ></td>
@@ -28,11 +28,11 @@
                 </tr>
                 <tr>
                     <th> 비밀번호 </th>
-                    <td> <input type="password" id="SignUp_pwd" v-model="User.password" :class="active_css.password" @keyup="Check_Pwd_Regular" maxlength="20" > </td>
+                    <td> <input type="password" id="SignUp_pwd" v-model="User.password" :class="active_css.password" @keyup="Check_Pwd_Regular" maxlength="20" autocomplete=”off”> </td>
                 </tr>
                 <tr>
                     <th> 비밀번호확인 </th>
-                    <td> <input type="password" id="SignUp_pwd2" v-model="User.password2" @keyup="Check_Pwd_Regular2" placeholder="비밀번호를 한번 더 입력해주세요" :class="active_css.password2" maxlength="20" > </td>
+                    <td> <input type="password" id="SignUp_pwd2" v-model="User.password2" @keyup="Check_Pwd_Regular2" placeholder="비밀번호를 한번 더 입력해주세요" :class="active_css.password2" maxlength="20" autocomplete=”off” > </td>
                 </tr>
                 
                 <tr>
@@ -60,7 +60,7 @@
                 </tr>
                 <tr id="SignUp_bn_tr" v-show="Common.open_bnNumber">
                     <th> 사업자번호 </th>
-                    <td> <input type="text" id="SignUp_bn" v-model="User.bnNumber" :class="active_css.bnNumber"> </td>
+                    <td> <input type="text" id="SignUp_bn" v-model="User.bnNumber" :class="active_css.bnNumber" autocomplete=”off”> </td>
                     <td> <button @click="Check_Business_Number">사업자번호확인</button></td>
                 </tr>
             </table>
@@ -141,25 +141,6 @@ export default {
         //회원가입 취소
         cancle() {
             this.$router.push({ name: 'home' })
-        },
-        create() {
-            if (this.result.name == '') {
-                this.active.name = true
-                return
-            } else {
-                this.active.name = false;
-            }
-            axios.put('/save', this.result)
-                .then((res) => {
-                    console.log(res)
-                    this.$store.commit('setUser', res.data.result)
-                    sessionStorage.setItem('setUser', this.base64(res.data.result))
-                    this.$router.push({ name: 'SelectView' })
-                })
-                .catch((err) => console.log(err))
-        },
-        base64(user) {
-            return window.btoa(encodeURIComponent(JSON.stringify(user)))
         },
         // name/personalNumber => duplicates in DataBase
         Check_SignUp_name(){

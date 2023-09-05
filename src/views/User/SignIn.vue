@@ -6,15 +6,15 @@
             <div class="signIn_Input">
                 <ul id="signIn_Email_tag">
                     <li>Email</li>
-                    <li>아이디 찾기</li>
+                    <!-- <li>아이디 찾기</li> -->
                 </ul>
-                <input type="text" id="SignIn_id" placeholder="Enter your Email"><br>
+                <input type="text" id="SignIn_id" placeholder="Enter your Email" v-model="User.email"><br>
                 <ul id="signIn_Pwd_tag">
                     <li>password</li>
-                     <li>비밀번호찾기</li>
+                     <!-- <li>비밀번호찾기</li> -->
                 </ul>
-                <input type="password" id="SignIn_pwd"><br>
-                <button type="button" class="SignIn_btn">로그인</button>
+                <input type="password" id="SignIn_pwd" v-model="User.password" autocomplete="off"><br>
+                <button type="button" class="SignIn_btn" @click="SignIn">로그인</button>
             </div>
             <button type="button" class="SignUp_btn" @click="Go_To_SignUp">회원가입</button>
         </div>
@@ -26,11 +26,16 @@
 </template>
 
 <script>
+import axios from "axios";
+import store from '@/store';
 export default {
     name : "signIn",
     data() {
         return {
-
+            User:{
+                email : '' ,
+                password : ''
+            }
         }
     },
     created(){
@@ -39,6 +44,63 @@ export default {
     methods: {
         Go_To_SignUp(){
              this.$router.push({ name: 'signUp' })
+        },
+        SignIn(){
+            let Check = this.Check_Regular_Expression('email', this.User.email);
+            console.log(Check)
+            if(Check){
+             axios.post('/ctg/SignIn_Ctg_Member', this.User)
+                .then((res) => {
+                    console.log(res.data)
+
+                    //store.js의 mutations로 받은 데이터를 할당해줌
+                    store.commit('setAccount',res.data.Member);
+                    sessionStorage.setItem("member",res.data.Member);
+                    //여기에 페이지 이동 넣어야함
+                    window.alert('로그인되었습니다.');
+                    
+
+                })
+                .catch((err) => 
+                    window.alert('로그인 정보가 존재하지않습니다.')
+                )
+            }else{
+                alert('올바른 이메일 양식 입력 부탁드립니다.')
+            }
+        },
+        //정규식검사 메서드
+        Check_Regular_Expression(key, value) {
+            let Regular_Expression = '';
+            let result = false;
+            if (key == 'email') {
+                Regular_Expression = /[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[.0-9a-zA-Z])*.[a-zA-Z]$/i;
+                result = (Regular_Expression.test(value) && value != '');
+            } 
+            // else if (key == 'rrn') {
+            //     Regular_Expression = /^(?:[0-9]{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[1,2][0-9]|3[0,1]))-[1-4][0-9]{6}$/;
+            //     result = (value.length == 14 && (Regular_Expression.test(value)));
+            //     console.log(value.length + ':' + Regular_Expression.test(value));
+            // } else if (key == 'password') {
+            //     const pw = value;
+            //     const num = pw.search(/[0-9]/g); //숫자확인
+            //     const eng = pw.search(/[a-z]/ig); //영어확인
+            //     const spe = pw.search(/[`~!@@#$%^&*|₩₩₩'₩';:₩/?]/gi); //특수문자확인
+            //     if (pw.length < 8 || pw.length > 16) { //비밀번호 길이확인
+            //         result = false;
+            //     } else if (pw.search(/\s/) != -1) { //공백확인
+            //         result = false;
+            //     } else if ((num < 0 && eng < 0) || (eng < 0 && spe < 0) || (spe < 0 && num < 0)) { //두가지 조합 혼합 확인
+            //         result = false;
+            //     } else {
+            //         result = true;
+            //     }
+            // } else if ('PhoneNumber') {
+            //     Regular_Expression = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
+            //     result = ((value.length == 11 || value.length == 10) && (Regular_Expression.test(value)));
+            // }
+
+            return result;
+
         }
     }
 }

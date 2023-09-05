@@ -16,6 +16,14 @@
         this.$store.commit('setUser',this.base64(user))
       }
     },
+
+    setup(){
+      //새로고침해도 풀리지않도록 작업
+      const id = sessionStorage.getItem("id");
+      if(id){
+        store.commit("setAccount",id);
+      }
+    },
     methods:{
       base64(user){
         return JSON.parse(decodeURIComponent(window.atob(user)))
