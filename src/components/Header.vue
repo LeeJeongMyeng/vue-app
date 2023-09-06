@@ -22,7 +22,7 @@
                         <li>내정보 이름주소 추가하기</li>
                 </div>
             </ul>
-           
+           <hr>
   </header>
 </template>
 
@@ -110,5 +110,9 @@ export default {
         /* background: red; */
         position: absolute;
         right: 2%;
+    }
+    hr{
+        width:90%;
+        border:2px solid rgb(216, 216, 216,0.2);
     }
 </style>

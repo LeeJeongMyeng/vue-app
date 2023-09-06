@@ -7,13 +7,16 @@
     "build": "vue-cli-service build --watch"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^39.0.2",
+    "@ckeditor/ckeditor5-vue": "^5.1.0",
+    "@mayasabha/ckeditor4-vue3": "^1.0.5",
     "@vue/cli": "^5.0.8",
     "axios": "^1.5.0",
     "bootstrap-vue-3": "^0.5.1",
     "core-js": "^3.8.3",
     "jquery": "^3.7.1",
     "vue-router": "^4.0.3",
-    "vuex": "^4.0.2",
+    "vuex": "^4.1.0",
     "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {

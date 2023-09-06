@@ -1,83 +1,117 @@
 <template>
+<div>
   <div class="container">
+    <h1>플리마켓 작성글 등록</h1>
      <table>
             <tr>
-             <th><span></span> 작성자 </th>
-                 <td> <input type="text" id="SignUp_name" placeholder="홍길동"  autocomplete=”off”> </td>
+             <th> 작성자 </th>
+                 <td> <input type="text" id="email" placeholder="홍길동"  autocomplete=”off”> </td>
             </tr>
             <tr>
-                 <th> 날짜 </th>
-                <td> <input type="text" id="SignUp_frrn" placeholder="앞 6자리">
+             <th>글제목 </th>
+                 <td> <input type="text" id="title" placeholder="홍길동"  autocomplete=”off”> </td>
+            </tr>
+            <tr>
+                <th> 진행기간 </th>
+                <td> <input type="text" id="stDate" placeholder="">
                      -
-                        <input type="text" id="SignUp_brrn" placeholder="뒤 7자리" > </td>
-                <td> <button @click="Check_SignUp_name">중복확인</button></td>
+                    <input type="text" id="endDate" placeholder="" > </td>
             </tr>
-            <tr class="addressbox">
-                    <th> 주소 </th>
-                    <td> 
-                    <div style="display: flex;">
-                    <input type="hidden" id="sample6_postcode" placeholder="우편번호" readonly>
-                    
-                    </div> 
-                    <input type="text" id="sample6_address" style="width: 69%" v-model="common.address"  placeholder="주소" ><input type="button" id="sample6_btn" @click="sample6_execDaumPostcode()" value="주소 찾기"><br>
-                    <input type="button" id="Address_Success" @click="Search_Marker" value="장소 확정">
-                    <input type="hidden" id="sample6_detailAddress" placeholder="상세주소">
-                    <input type="hidden" id="sample6_extraAddress" placeholder="참고항목" readonly>
-                    </td>
+           <tr class="addressbox">
+                        <th> 진행장소 </th>
+                        <td> 
+                        <div style="display: flex;">
+                        <input type="hidden" id="sample6_postcode" placeholder="우편번호" readonly>
+                        <input type="button" id="sample6_btn" @click="sample6_execDaumPostcode()" value="주소찾기"><br>
+                        </div> 
+                        <input type="text" id="sample6_address" placeholder="주소" readonly><br>
+                        <input type="text" id="sample6_detailAddress" placeholder="상세위치 ex) OO공원 00구역">
+                        <input type="hidden" id="sample6_extraAddress" placeholder="참고항목" readonly>
+                        </td>
             </tr>
-            <!-- 카카오맵 -->
+            <tr style=" margin-top:5px;">
+                <th colspan='3' style="font-size:24px;">모집요강</th>
+            </tr>
             <tr>
                <td colspan='3'>
-                <KakaoMap id="map" v-bind:addressdata="common.address" :options="mapOption"></KakaoMap>
+                <ckeditor v-model="editorData" :config="editorConfig"></ckeditor> 
+                <!-- <input id="customFile" type="file" @change="handleFileChange"/> -->
+                </td>
+            </tr>
+            <tr>
+               <td>
+                <input id="customFile" type="file" @change="readInputFile" multiple/>
+                <v-img v-for="(item, i) in uploadimageurl" :key="i" :src="item.url"
+                contain height="150px" width="200px" style="border: 2px solid black; margin-left:100px;"/>
                </td>
             </tr>
             <tr>
-                <textarea></textarea>
+                <div id="imagePreview">
+                    <img id="img" />
+                </div>
             </tr>
     </table>
-    <div>
-     <button>등록</button>
-    </div>    
+  </div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
 import store from '@/store';
-import KakaoMap from "../../components/KakaoMap.vue";
 
-
-export default {
+export default  {
+    
     name:'reg_FleaMarket',
     components:{
-        KakaoMap
+         
     },
     data() {
         return {
-            mapOption:{
-                center:{
-                    lat:33.450701,
-                    lng:126.570667,
-                },
-                level:8,            
-            },
             common:{
-                address : ''
-            }
+                uploadimageurl: [],    // 업로드한 이미지의 미리보기 기능을 위해 url 저장하는 객체
+                imagecnt: 0,
+                imagelist: [],        // 불러온 이미지들의 url을 저장하는 객체
+                imagecnt: 0,
+            },
+            //CKEditer
+            editorData: '<p>Content of the editor.</p>',
+            editorConfig: {
+                // The configuration of the editor.
+            },
+            //데이터 전송용
+            FleaMarket:{
+                email:'',
+                title: '',
+                content: '< p > Content of the editor.</p> ',
+                address: ''
+            },
+            address : ''
         }
     },
     props:{
         
     },
     mounted(){
-    
-            // api 스크립트 소스 불러오기 및 지도 출력
-            if (window.kakao && window.kakao.maps) {
-                this.loadMap();
-            } else {
-                this.loadScript();
-            }
-        
+        //  axios({
+        //     url: "http://127.0.0.1:52273/content/content/",
+        //     method: "POST",
+        //     data: {
+        //         id: this.$route.query.id
+        //     },
+        // }).then(res => {
+        //     this.writer = res.data.writer;
+        //     this.title = res.data.title;
+        //     this.createdAt = res.data.createdAt.split('T')[0];
+        //     this.updatedAt = res.data.updatedAt.split('T')[0];
+        //     this.text = res.data.text;
+        //     this.imagecnt = res.data.imagecnt;    // db에서 새로운 field인 imagecnt 값도 받아옴
+        //     for (var i = 1; i <= res.data.imagecnt; i++) {
+        //         this.imagelist.push(this.$route.query.id + '-' + i + '.png');
+        //         // 이미지를 저장할 때, '글id - 1.png', '글id - 2.png', ... 이런식으로 저장할 것임
+        //     }
+        // }).catch(err => {
+        //     alert(err);
+        // });
     },
     created(){
           
@@ -135,111 +169,111 @@ export default {
 
             }).open();
         },
-        // api 불러오기
-        loadScript() {
-            const script = document.createElement("script");
-            script.src =
-                "//dapi.kakao.com/v2/maps/sdk.js?appkey=8a93693b514b55e6af5ef4f64d5ce6be&autoload=false";
-            script.onload = () => window.kakao.maps.load(this.loadMap);
-
-            document.head.appendChild(script);
-        },
-        // 맵 출력하기
-        loadMap() {
-            const container = document.getElementById("map");
-            const options = {
-                center: new window.kakao.maps.LatLng(33.450701, 126.570667),
-                level: 3
-            };
-
-            this.map = new window.kakao.maps.Map(container, options);
-            this.loadMaker();
-        },
-        
-
-        Search_Marker() {
+        onImageChange(file) {    // v-file-input 변경시
+            if (!file) {
+                return;
+            }
+            const formData = new FormData();    // 파일을 전송할때는 FormData 형식으로 전송
+            this.uploadimageurl = [];        // uploadimageurl은 미리보기용으로 사용
+            file.forEach((item) => {
+                formData.append('filelist', item)    // formData의 key: 'filelist', value: 이미지
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.uploadimageurl.push({ url: e.target.result });
+                    // e.target.result를 통해 이미지 url을 가져와서 uploadimageurl에 저장
+                };
+                reader.readAsDataURL(item);
+            });
+            axios({
+                url: "http://localhost:8081/cthg/imagesave",    // 이미지 저장을 위해 back서버와 통신
+                method: "POST",
+                headers: { 'Content-Type': 'multipart/form-data' },    // 이걸 써줘야 formdata 형식 전송가능
+                data: formData,
+            }).then(res => {
+                console.log(res.data.message);
+                this.imagecnt = file.length;    // 이미지 개수 저장
+            }).catch(err => {
+                alert(err);
+            });
             
-            var geocoder = new kakao.maps.services.Geocoder();
-
-            geocoder.addressSearch(this.common.address, function (result, status) {
-
-                // 정상적으로 검색이 완료됐으면 
-                if (status === kakao.maps.services.Status.OK) {
-
-                    var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-
-                    // 결과값으로 받은 위치를 마커로 표시합니다
-                    var marker = new kakao.maps.Marker({
-                        map: map,
-                        position: coords
-                    });
-
-                    // 인포윈도우로 장소에 대한 설명을 표시합니다
-                    var infowindow = new kakao.maps.InfoWindow({
-                        content: '<div style="width:150px;text-align:center;padding:6px 0;">우리회사</div>'
-                    });
-                    infowindow.open(map, marker);
-
-                    // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
-                    map.setCenter(coords);
-                }
-            });
         },
-        // 지정한 위치에 마커 불러오기
-        loadMaker() {
-            const markerPosition = new window.kakao.maps.LatLng(
-                33.450701,
-                126.570667
-            );
-
-            const marker = new window.kakao.maps.Marker({
-                position: markerPosition,
-            });
-
-            marker.setMap(this.map);
-        },
-        
+        readInputFile(e){
+            
+            $('#imagePreview').empty();
+            var files = e.target.files;
+            var fileArr = Array.prototype.slice.call(files);
+            console.log(fileArr);
+            fileArr.forEach(function (f) {
+                if (!f.type.match("image/.*")) {
+                    alert("이미지 확장자만 업로드 가능합니다.");
+                    return;
+                };
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var html = `<img src=${e.target.result} />`;
+                    $('#imagePreview').append(html);
+                };
+                reader.readAsDataURL(f);
+            })
+        }
        
     }
 }
+
 </script>
 
 <style scoped>
+    
     .container{
         /* background: red; */
-        width: 70%;
+        width: 57%;
         margin: 0 auto;
         height: 80vh;
+        box-shadow: 0 0 7px gray;
     }
     table {
        position: relative;
     top: 46%;
-    left: 54%;
+    left: 50%;
     transform: translate(-50%,-50%);
     font-size: 32px;
-    width: 50%;
-    height: 30%;
-    background: rgb(189, 179, 179);
+    width: 100%;
+    /* height: 30%; */
+    /* background: rgb(189, 179, 179); */
     }
         /* background: red; */
 
-    table tr{
+    table tr th{
+        font-size: 17px;
+        font-weight: bolder;
         /* border : 1px solid gray; */
+        height: 54px;
     }
+   
 
     table tr input[type=text]{
-        width: 80%;
-        height: 20px;
+        width: 50%;
+        height: 15px;
         border-radius: 5px;
         padding: 6px;
+        border: none;
+        box-shadow: 0 0 3px;
+    }
+    
+    table tr input[id=email]{
+        width: 22%;
+        
     }
 
+    table tr #stDate,#endDate{
+        width: 23%;
+    }
+    ckeditor{
+        width: 80%;
+    }
+    
 
-    /*카카오지도 */
-    #map {
-    width: 66%;
-    height: 300px;
-    margin: 0 auto;
-}
+
+
 
 </style>
