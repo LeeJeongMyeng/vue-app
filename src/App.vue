@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Header/>
+    <Header :data="data" />
     <router-view/>
   </div>
 </template>
@@ -13,22 +13,29 @@ import { useRoute } from 'vue-router'
 import store from '@/store';
 
   export default {
-    created() {
-      const user = sessionStorage.getItem('setUser')
-     // console.log('AppVue:'+JSON.parse(user))
-      if(user){
-        //console.log(user, this.base64(user))
-        this.$store.commit('setUser',this.base64(user))
+    data(){
+      return{
+        data : true
       }
+    },
+    created() {
+    //   const user = sessionStorage.getItem('setUser')
+    //  // console.log('AppVue:'+JSON.parse(user))
+    //   if(user){
+    //     //console.log(user, this.base64(user))
+    //     this.$store.commit('setUser',this.base64(user))
+    //   }
 
-      const route = useRoute();
+    
+
+      //const route = useRoute();
     },
     
     setup() {
     const token_check = () => {
       axios.get("/ctg/account_check").then(({ data }) => {
         console.log(data);
-        store.commit("setAccount", data || null);
+        //store.commit("setAccount", data || null);
       })
     };
 
@@ -40,8 +47,12 @@ import store from '@/store';
     })
   },
     methods:{
-      base64(user){
-        return JSON.parse(decodeURIComponent(window.atob(user)))
+      Check_Log_Btn(){
+        if (localStorage.getItem("member")) {
+        this.bool = false;
+      } else {
+        this.bool = true
+      }
       }
     },
     components:{

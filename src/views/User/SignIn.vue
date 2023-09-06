@@ -27,7 +27,7 @@
 
 <script>
 import axios from "axios";
-import store from '@/store';
+
 export default {
     name : "signIn",
     data() {
@@ -54,14 +54,14 @@ export default {
                     console.log(res.data)
 
                     //store.js의 mutations로 받은 데이터를 할당해줌
-                    store.commit('setAccount',res.data);
-                    sessionStorage.setItem("member",res.data);
-                    
+                    //const data = {'member':res.data,'bool':true}
+                     this.$store.commit('setAccount',res.data);
+                     this.$store.dispatch('ctl_Log_Btn',true);
+                    sessionStorage.setItem("member",JSON.stringify(res.data));
+                   // this.$emit('data', false);
                     window.alert('로그인되었습니다.');
                     this.$router.push({ name: 'home' })
-
-                })
-                .catch((err) => 
+                }).catch((err) => 
                     window.alert('로그인 정보가 존재하지않습니다.')
                 )
             }else{

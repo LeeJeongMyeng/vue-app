@@ -6,17 +6,20 @@
         </div>
 
              <ul class="nav" id="header-nav1">
-                <li><router-link to="/">플리마켓</router-link></li>
+                <li><router-link to="/ctg/reg_FleaMarket">플리마켓</router-link></li>
                 <li><router-link to="/user/signIn">공지사항</router-link></li>
                 <li><router-link to="/user/signIn">문의글</router-link></li>
                 <!-- 로그인아이디가 있으면 보여진다. -->
-                <div class="rightNav" v-if="!$store.state.account.member">
+                 <!-- v-if="!$store.state.account.member" -->
+                 <!-- v-if="$store.state.bool == false" -->
+               
+                <div class="rightNav" v-if="!$store.state.bool">
                     <li><router-link to="/user/signIn">로그인</router-link></li>
                     <li><router-link to="/user/signUp">회원가입</router-link></li>
                 </div>
                 <div class="rightNav" v-else>
                         <li><router-link to="/user/signIn" @click="Logout_Ctg_Member">로그아웃</router-link></li>
-                        <li>내정보</li>
+                        <li>내정보 이름주소 추가하기</li>
                 </div>
             </ul>
            
@@ -30,25 +33,42 @@ export default {
     name: "Header",
     data() {
         return {
-           
+           bool: store.state.bool
         }
     },
+    props:{
+        data : Boolean
+    },
     created() {
-
+        // if(localStorage.getItem("member")){
+        //     this.bool = false;
+        // }else{
+        //     this.bool = true
+        // }
     },
     methods: {
        Logout_Ctg_Member(){
+
         axios.post('/ctg/logout')
                 .then((res) => {
                     console.log(res)
-                    store.commit('setAccount', null);
+                   
+                    this.$store.commit('setAccount','');
+                    this.$store.dispatch('ctl_Log_Btn', false);
                     sessionStorage.removeItem("member");
                     //여기에 페이지 이동 넣어야함
+                    this.$emit('data',true);
                     window.alert('로그아웃 되었습니다.');
-                    
+                    this.Control_Log_Btn();
                 })
                 .catch((err) => console.log(err))
          
+       },
+       Control_Log_Btn(){
+        const member = sessionStorage.getItem("member");
+        if(member==null){
+            this.bool=false
+        }
        }
     }
 }

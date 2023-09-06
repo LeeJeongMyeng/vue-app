@@ -26,10 +26,10 @@ const routes = [
       import(/* webpackChunkName: "user" */ "../views/User/SignUp.vue"),
   },
   {
-    path: "/user/editById",
-    name: "UpdateView",
+    path: "/ctg/reg_FleaMarket",
+    name: "reg_FleaMarket",
     component: () =>
-      import(/* webpackChunkName: "user" */ "../views/UpdateView.vue"),
+      import(/* webpackChunkName: "user" */ "../views/FleaMarket/reg_FleaMarket.vue"),
   },
   {
     path: "/user/Save",
