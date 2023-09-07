@@ -16,21 +16,7 @@
             </tr>
             <tr>
                 <th> 신청마감일자 </th>
-                <td> <date-picker
-                        v-if="dateType === 'day'"
-                        v-model="FleaMarket.endDate"
-                        format="YYYY-MM-DD"
-                        :lang="lang"
-                        type="date" 
-                        placeholder="날짜선택" 
-                        id="Datepicker" 
-                        style=" width: 50%;
-                                height: 15px;
-                                border-radius: 5px;
-                                padding: 6px;
-                                border: none;
-                                box-shadow: 0 0 3px;"
-                    ></date-picker>
+                <td> <input type="date" v-model="FleaMarket.endDate">
                     </td>
                     <td style="font-size: 17px; font-weight: bolder;">모집규모<input type="text" v-model="FleaMarket.approvalCnt" style="margin: 0 0 0 14px; width: 122px;"></td>
             </tr>
@@ -69,8 +55,8 @@
                 </td>
             </tr>
     </table>
-    <!-- <div style="display: flex;"><button type="button" id="regFMbtn" @click="reg_FleaMarket"> 게시글 등록 </button></div> -->
-    <div style="display: flex;"><button type="button" id="regFMbtn" @click="check"> 게시글 등록 </button></div>
+    <div style="display: flex;"><button type="button" id="regFMbtn" @click="reg_FleaMarket"> 게시글 등록 </button></div>
+    <!-- <div style="display: flex;"><button type="button" id="regFMbtn" @click="check"> 게시글 등록 </button></div> -->
   </div>
   </div>
 </template>
@@ -105,7 +91,8 @@ export default  {
                 imagecnt: 0,
                 imagelist: [],        // 불러온 이미지들의 url을 저장하는 객체
                 imagecnt: 0,
-                 
+                FormData: '', //파일 
+                endDate:''
             },
             //CKEditer
             editorConfig: {
@@ -118,8 +105,7 @@ export default  {
                 title: '', // 제목
                 endDate: '', //게시글 종료날짜
                 address:'',
-                FormData:'', //파일
-                approvalCnt:'', //모집인원수
+                approvalCnt:0, //모집인원수
                 content: `<div style="background:#eeeeee;border:1px solid #cccccc;padding:5px 10px;">개요<br />
                                         &nbsp;</div>
 
@@ -268,7 +254,6 @@ export default  {
                                         <p>또한 신청시 개인정보 수집 및 이용 동의한 것으로 간주됩니다.</p>
 
                                         <p>(핸드폰번호, 신청자명 / 이용 목적 : 본인 식별 및 신청 내용 통보 / 유효기간 : 행사 종료 후)</p>`,
-                
             },
             
             monthDate: null,
@@ -350,7 +335,7 @@ export default  {
 
             var files = e.target.files;
             var fileArr = Array.prototype.slice.call(files);
-            console.log(fileArr);
+           // console.log(fileArr);
             fileArr.forEach(function (f) {
                 if (!f.type.match("image/.*")) {
                     alert("이미지 확장자만 업로드 가능합니다.");
@@ -367,25 +352,56 @@ export default  {
         },
         //data에 파일 담아줌
         inputFiles() {
-            this.FleaMarket.FormData = this.$refs.files.files
+            this.common.FormData = this.$refs.files.files
 
-            console.log(this.FleaMarket.FormData)
+            //console.log(this.common.FormData)
+        },
+        reg_FleaMarket(){
+
+
+            //주소 삽입 => 주소api로 데이터를 받으면 v-model에 적용안된다.
+                 this.FleaMarket.address = $('#sample6_address').val();
+               
+
+                    // console.log(this.FleaMarket.userno)
+                    // console.log(this.FleaMarket.email)
+                    // console.log(this.FleaMarket.title)
+                    // console.log(this.FleaMarket.endDate)
+                    // console.log(this.FleaMarket.address)
+                    // console.log(this.FleaMarket.approvalCnt)
+                    // console.log(this.FleaMarket.content)
+
+
+                axios.post('/ctg/reg_FleaMarket', this.FleaMarket)
+                .then((res) => {
+                    console.log(res)
+                    
+                })
+                .catch((err) => console.log(err))
+                this.check();
         },
         check(){
         
-
-            this.FleaMarket.address = $('#sample6_address').val();
-            console.log('dadsadasd',typeof($('#Datepicker').val()));
-            //this.FleaMarket.endDate = $('#Datepicker').val();
+            const formData = new FormData();
+           
+            for (let i = 0; i < this.common.FormData.length; i++) {
+                console.log('zz',this.common.FormData[i])
+                formData.append("files", this.common.FormData[i]);
+            }
             
-           console.log(this.FleaMarket.userno)
-           console.log(this.FleaMarket.email)
-           console.log(this.FleaMarket.title)
-           console.log(this.FleaMarket.endDate)
-           console.log(this.FleaMarket.address)
-           console.log(this.FleaMarket.FormData)
-           console.log(this.FleaMarket.approvalCnt)
-           console.log(this.FleaMarket.content)
+           
+
+            axios.post('/ctg/reg_FleaMarket_files', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+                .then((response) => {
+                    console.log(response)
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
            
         }
         
