@@ -1,21 +1,38 @@
 <template>
 <div>
+    <div style="text-align: center; height: 61px; margin: 36px 0;"><h1 style="font-size: 29px; font-weight: bold;">플리마켓 작성글 등록</h1></div>
   <div class="container">
-    <h1>플리마켓 작성글 등록</h1>
+    
      <table>
             <tr>
-             <th> 작성자 </th>
-                 <td> <input type="text" id="email" placeholder="홍길동"  autocomplete=”off”> </td>
+                 
+                 <td> <input type="hidden"  v-model="FleaMarket.userno" id="userno" >
+                        <input type="hidden" v-model="FleaMarket.email" id="email" >
+                 </td>
             </tr>
             <tr>
              <th>글제목 </th>
-                 <td> <input type="text" id="title" placeholder="홍길동"  autocomplete=”off”> </td>
+                 <td colspan="2"> <input type="text" v-model="FleaMarket.title" id="title" placeholder="홍길동"  autocomplete=”off”> </td>
             </tr>
             <tr>
-                <th> 진행기간 </th>
-                <td> <input type="text" id="stDate" placeholder="">
-                     -
-                    <input type="text" id="endDate" placeholder="" > </td>
+                <th> 신청마감일자 </th>
+                <td> <date-picker
+                        v-if="dateType === 'day'"
+                        v-model="FleaMarket.endDate"
+                        format="YYYY.MM.DD"
+                        :lang="lang"
+                        type="date" 
+                        placeholder="날짜선택" 
+                        id="Datepicker" 
+                        style=" width: 50%;
+                                height: 15px;
+                                border-radius: 5px;
+                                padding: 6px;
+                                border: none;
+                                box-shadow: 0 0 3px;"
+                    ></date-picker>
+                    </td>
+                    <td style="font-size: 17px; font-weight: bolder;">모집규모<input type="text" v-model="approvalCnt" style="margin: 0 0 0 14px; width: 122px;"></td>
             </tr>
            <tr class="addressbox">
                         <th> 진행장소 </th>
@@ -24,33 +41,35 @@
                         <input type="hidden" id="sample6_postcode" placeholder="우편번호" readonly>
                         <input type="button" id="sample6_btn" @click="sample6_execDaumPostcode()" value="주소찾기"><br>
                         </div> 
-                        <input type="text" id="sample6_address" placeholder="주소" readonly><br>
-                        <input type="text" id="sample6_detailAddress" placeholder="상세위치 ex) OO공원 00구역">
+                        <input type="text" v-model="address" id="sample6_address" placeholder="주소" readonly><br>
+                        <input type="hidden" id="sample6_detailAddress" placeholder="상세위치 ex) OO공원 00구역">
                         <input type="hidden" id="sample6_extraAddress" placeholder="참고항목" readonly>
                         </td>
             </tr>
             <tr style=" margin-top:5px;">
-                <th colspan='3' style="font-size:24px;">모집요강</th>
+                <th colspan='3' style="padding: 31px; font-size: 30px;">모집요강</th>
             </tr>
             <tr>
                <td colspan='3'>
-                <ckeditor v-model="editorData" :config="editorConfig"></ckeditor> 
-                <!-- <input id="customFile" type="file" @change="handleFileChange"/> -->
+                <ckeditor id="ckeditor" v-model="FleaMarket.content" :config="editorConfig"></ckeditor> 
+                <button @click="check">확인</button>
+                
                 </td>
             </tr>
             <tr>
-               <td>
-                <input id="customFile" type="file" @change="readInputFile" multiple/>
-                <v-img v-for="(item, i) in uploadimageurl" :key="i" :src="item.url"
-                contain height="150px" width="200px" style="border: 2px solid black; margin-left:100px;"/>
+               <td style="padding: 10px">
+                <input id="customFile" type="file" ref="files" @change="readInputFile" multiple accept="image/*"/>
                </td>
             </tr>
             <tr>
-                <div id="imagePreview">
-                    <img id="img" />
-                </div>
+                <td colspan='3'>
+                    <div id="imagePreview">
+                        <span style="font-size: 17px;">이미지 미리보기</span>
+                    </div>
+                </td>
             </tr>
     </table>
+    <div style="display: flex;"><button type="button" id="regFMbtn" @click="reg_FleaMarket"> 게시글 등록 </button></div>
   </div>
   </div>
 </template>
@@ -58,13 +77,26 @@
 <script>
 import axios from "axios";
 import store from '@/store';
+import Datepicker from "vue3-datepicker";
+import { ref } from 'vue'
+
 
 export default  {
     
     name:'reg_FleaMarket',
     components:{
-         
+         'date-picker':Datepicker
     },
+    computed:{
+       member() {
+            return this.$store.state.member
+        }
+    },
+    created(){
+        this.FleaMarket.userno = this.member.userno;
+        this.FleaMarket.email = this.member.email;
+    },
+    
     data() {
         return {
             common:{
@@ -72,50 +104,189 @@ export default  {
                 imagecnt: 0,
                 imagelist: [],        // 불러온 이미지들의 url을 저장하는 객체
                 imagecnt: 0,
+                 
             },
             //CKEditer
-            editorData: '<p>Content of the editor.</p>',
             editorConfig: {
                 // The configuration of the editor.
             },
             //데이터 전송용
             FleaMarket:{
+                userno: '', //작성자 회원번호
                 email:'',
-                title: '',
-                content: '< p > Content of the editor.</p> ',
+                title: '', // 제목
+                endDate: '', //게시글 종료날짜
+                address:'',
+                FormData:'', //파일
+                approvalCnt:'', //모집인원수
+                content: `<div style="background:#eeeeee;border:1px solid #cccccc;padding:5px 10px;">개요<br />
+                                        &nbsp;</div>
+
+                                        <p>​</p>
+
+                                        <p>&nbsp;</p>
+
+                                        <p>기본설명글작성해주세요</p>
+
+                                        <p>&nbsp;</p>
+
+                                        <p>&nbsp;</p>
+
+                                        <p>-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</p>
+
+                                        <p><br />
+                                        ﻿✅[마켓&middot;행사&middot;샵인샵]명칭 (ex.마켓명)</p>
+
+                                        <p>👉&nbsp;</p>
+
+                                        <p>​</p>
+
+                                        <p>​</p>
+
+                                        <p>﻿﻿✅마켓의 주제</p>
+
+                                        <p>👉&nbsp;</p>
+
+                                        <p>​</p>
+
+                                        <p>​</p>
+
+                                        <p>​</p>
+
+                                        <p>﻿✅주최 및 주관사 정보 (사업자명,사업자번호 필수기재)</p>
+
+                                        <p>👉 사업자명 :&nbsp;</p>
+
+                                        <p>👉 사업자번호 :&nbsp;</p>
+
+                                        <p>👉 추가기입사항:</p>
+
+                                        <p>​</p>
+
+                                        <p>​</p>
+
+                                        <p>﻿✅개최장소 혹은 입점장소</p>
+
+                                        <p>👉&nbsp;</p>
+
+                                        <p><br />
+                                        ﻿✅개최일정 혹은 입점일정</p>
+
+                                        <p>👉&nbsp;</p>
+
+                                        <p>​</p>
+
+                                        <p>​</p>
+
+                                        <p>﻿✅모집기간</p>
+
+                                        <p>﻿👉 0000년 0월 00일 ~ 0월 00일 매주 금/토/일</p>
+
+                                        <p>​</p>
+
+                                        <p>​</p>
+
+                                        <p>﻿✅모집규모 (ex)모집셀러수,행사장규모,입점매장 규모)</p>
+
+                                        <p>﻿👉 전체참여셀러(팀)수 ( 80팀 )</p>
+
+                                        <p>​</p>
+
+                                        <p>​</p>
+
+                                        <p>​</p>
+
+                                        <p>﻿✅모집조건</p>
+
+                                        <p>﻿👉 예시) 핸드메이드, 수공예 품등</p>
+
+                                        <p>​</p>
+
+                                        <p>​</p>
+
+                                        <p>﻿✅참가(입점)비용</p>
+
+                                        <p>﻿👉 .</p>
+
+                                        <p>​</p>
+
+                                        <p>﻿✅보관비용</p>
+
+                                        <p>👉</p>
+
+                                        <p>​</p>
+
+                                        <p>✅환불기준</p>
+
+                                        <p>👉 행사전 우천시 100% 반환 외 환불 불가</p>
+
+                                        <p>👉 행사 간 50%이상 진행이 된 경우 참가비용은 반환 되지 않음</p>
+
+                                        <p>👉 행사일 2일전 참가비 환불불가</p>
+
+                                        <p>​</p>
+
+                                        <p>​</p>
+
+                                        <p>﻿✅유동인구수</p>
+
+                                        <p>﻿👉&nbsp;</p>
+
+                                        <p>​</p>
+
+                                        <p>​</p>
+
+                                        <p>﻿✅주차지원여부</p>
+
+                                        <p>👉</p>
+
+                                        <p>​</p>
+
+                                        <p>&nbsp;</p>
+
+                                        <p>​</p>
+
+                                        <p>​</p>
+
+                                        <p>✅현장지원안내(ex)행사지원인원,테이블,헹거 집기류등)</p>
+
+                                        <p>👉 행사 운영인력 :&nbsp;</p>
+
+                                        <p>👉 행사 지원품목 :&nbsp;</p>
+
+                                        <p>&nbsp;</p>
+
+                                        <p>&nbsp;</p>
+
+                                        <p>﻿</p>
+
+                                        <p>👉 신청 전 유의사항을 확인해주세요.</p>
+
+                                        <p>미확인 후 사고 발생 시 책임은 본인에게 부담됩니다.</p>
+
+                                        <p>또한 신청시 개인정보 수집 및 이용 동의한 것으로 간주됩니다.</p>
+
+                                        <p>(핸드폰번호, 신청자명 / 이용 목적 : 본인 식별 및 신청 내용 통보 / 유효기간 : 행사 종료 후)</p>`,
                 address: ''
             },
-            address : ''
+            address : '',
+            monthDate: null,
+            lang: {
+                days: ["일", "월", "화", "수", "목", "금", "토"],
+                months: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+                yearFormat: "YYYY년",
+                monthFormat: "MM월",
+                monthBeforeYear: false,
+            },
+            dateType: "day", // 일간: day, 주간: week, 월간: month
         }
     },
-    props:{
-        
+    setup() {
     },
     mounted(){
-        //  axios({
-        //     url: "http://127.0.0.1:52273/content/content/",
-        //     method: "POST",
-        //     data: {
-        //         id: this.$route.query.id
-        //     },
-        // }).then(res => {
-        //     this.writer = res.data.writer;
-        //     this.title = res.data.title;
-        //     this.createdAt = res.data.createdAt.split('T')[0];
-        //     this.updatedAt = res.data.updatedAt.split('T')[0];
-        //     this.text = res.data.text;
-        //     this.imagecnt = res.data.imagecnt;    // db에서 새로운 field인 imagecnt 값도 받아옴
-        //     for (var i = 1; i <= res.data.imagecnt; i++) {
-        //         this.imagelist.push(this.$route.query.id + '-' + i + '.png');
-        //         // 이미지를 저장할 때, '글id - 1.png', '글id - 2.png', ... 이런식으로 저장할 것임
-        //     }
-        // }).catch(err => {
-        //     alert(err);
-        // });
+      
     },
-    created(){
-          
-    },
+    
     methods:{
         //주소
          sample6_execDaumPostcode() {
@@ -169,37 +340,11 @@ export default  {
 
             }).open();
         },
-        onImageChange(file) {    // v-file-input 변경시
-            if (!file) {
-                return;
-            }
-            const formData = new FormData();    // 파일을 전송할때는 FormData 형식으로 전송
-            this.uploadimageurl = [];        // uploadimageurl은 미리보기용으로 사용
-            file.forEach((item) => {
-                formData.append('filelist', item)    // formData의 key: 'filelist', value: 이미지
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.uploadimageurl.push({ url: e.target.result });
-                    // e.target.result를 통해 이미지 url을 가져와서 uploadimageurl에 저장
-                };
-                reader.readAsDataURL(item);
-            });
-            axios({
-                url: "http://localhost:8081/cthg/imagesave",    // 이미지 저장을 위해 back서버와 통신
-                method: "POST",
-                headers: { 'Content-Type': 'multipart/form-data' },    // 이걸 써줘야 formdata 형식 전송가능
-                data: formData,
-            }).then(res => {
-                console.log(res.data.message);
-                this.imagecnt = file.length;    // 이미지 개수 저장
-            }).catch(err => {
-                alert(err);
-            });
-            
-        },
+        //파일 미리보기 처리 -> inputFiles()로가서 파일데이터 담아줌
         readInputFile(e){
             
             $('#imagePreview').empty();
+
             var files = e.target.files;
             var fileArr = Array.prototype.slice.call(files);
             console.log(fileArr);
@@ -210,12 +355,23 @@ export default  {
                 };
                 var reader = new FileReader();
                 reader.onload = function (e) {
-                    var html = `<img src=${e.target.result} />`;
+                    var html = `<img  src=${e.target.result} style='width:15%; margin: 0 18px;' />`;
                     $('#imagePreview').append(html);
                 };
                 reader.readAsDataURL(f);
             })
+            //this.inputFiles();
+        },
+        //data에 파일 담아줌
+        inputFiles() {
+            this.FleaMarket.FormData = this.$refs.files.files
+
+            console.log(this.FleaMarket.FormData)
+        },
+        check(){
+           console.log(this.FleaMarket.content)
         }
+        
        
     }
 }
@@ -228,31 +384,33 @@ export default  {
         /* background: red; */
         width: 57%;
         margin: 0 auto;
-        height: 80vh;
+        height: 125vh;
         box-shadow: 0 0 7px gray;
-    }
+        }
     table {
-       position: relative;
-    top: 46%;
+     position: relative;
+    top: 43%;
     left: 50%;
     transform: translate(-50%,-50%);
     font-size: 32px;
     width: 100%;
     /* height: 30%; */
     /* background: rgb(189, 179, 179); */
-    }
-        /* background: red; */
-
+    margin: 0 0 67px 0;
+}
+    
+       
     table tr th{
         font-size: 17px;
         font-weight: bolder;
         /* border : 1px solid gray; */
         height: 54px;
+        width: 20%;
     }
    
 
     table tr input[type=text]{
-        width: 50%;
+        width: 95%;
         height: 15px;
         border-radius: 5px;
         padding: 6px;
@@ -271,6 +429,44 @@ export default  {
     ckeditor{
         width: 80%;
     }
+
+  .cke_contents{ height: 400px; }
+
+    #Datepicker{
+            width: 50%;
+    height: 15px;
+    border-radius: 5px;
+    padding: 6px;
+    border: none;
+    box-shadow: 0 0 3px;
+    }
+
+    #imagePreview{
+     width: 97%;
+    /* background: red; */
+    max-height: 500px;
+    height: 221px;
+    padding: 17px;
+    box-shadow: 0 0 5px gray;
+    }
+
+    #imagePreview img{
+        width: 10%;
+        
+    }
+
+   #regFMbtn{
+    margin: 0 auto;
+    width: 30%;
+    height: 45px;
+    border-radius: 5px;
+    border: none;
+    box-shadow: 0 0 4px purple;
+    background: #bc44bc;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+   }
     
 
 

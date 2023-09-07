@@ -32,3 +32,5 @@ npm install  @vue/cli
 npm install vuex --save
 npm install axios      
  npm install vuex-persistedstate
+ npm install @mayasabha/ckeditor4-vue3
+ npm i vue3-datepicker

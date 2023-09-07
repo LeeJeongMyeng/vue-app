@@ -5,6 +5,9 @@ export default createStore({
   state: {
     bool: false,
     member: "",
+    member2:{
+      userno:202020
+    }
   },
   //state값을 변경하는 로직
   mutations: {

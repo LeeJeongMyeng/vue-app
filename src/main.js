@@ -6,6 +6,7 @@ import axios from 'axios'
 import store from './store/index'
 import CKEditor from "@mayasabha/ckeditor4-vue3";
 
+
 // 부트스트랩
 // import BootstrapVue3 from "bootstrap-vue-3";
 // import "bootstrap/dist/css/bootstrap.css";
