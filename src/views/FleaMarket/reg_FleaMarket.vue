@@ -19,7 +19,7 @@
                 <td> <date-picker
                         v-if="dateType === 'day'"
                         v-model="FleaMarket.endDate"
-                        format="YYYY.MM.DD"
+                        format="YYYY-MM-DD"
                         :lang="lang"
                         type="date" 
                         placeholder="날짜선택" 
@@ -32,20 +32,20 @@
                                 box-shadow: 0 0 3px;"
                     ></date-picker>
                     </td>
-                    <td style="font-size: 17px; font-weight: bolder;">모집규모<input type="text" v-model="approvalCnt" style="margin: 0 0 0 14px; width: 122px;"></td>
+                    <td style="font-size: 17px; font-weight: bolder;">모집규모<input type="text" v-model="FleaMarket.approvalCnt" style="margin: 0 0 0 14px; width: 122px;"></td>
             </tr>
-           <tr class="addressbox">
-                        <th> 진행장소 </th>
+            <tr class="addressbox">
+                        <th> 주소 </th>
                         <td> 
                         <div style="display: flex;">
                         <input type="hidden" id="sample6_postcode" placeholder="우편번호" readonly>
-                        <input type="button" id="sample6_btn" @click="sample6_execDaumPostcode()" value="주소찾기"><br>
+                        <input type="button" id="sample6_btn" @click="sample6_execDaumPostcode()" value="우편번호 찾기"><br>
                         </div> 
-                        <input type="text" v-model="address" id="sample6_address" placeholder="주소" readonly><br>
-                        <input type="hidden" id="sample6_detailAddress" placeholder="상세위치 ex) OO공원 00구역">
+                        <input type="text" id="sample6_address" placeholder="주소" readonly><br>
+                        <input type="hidden" id="sample6_detailAddress" placeholder="상세주소">
                         <input type="hidden" id="sample6_extraAddress" placeholder="참고항목" readonly>
                         </td>
-            </tr>
+                    </tr>
             <tr style=" margin-top:5px;">
                 <th colspan='3' style="padding: 31px; font-size: 30px;">모집요강</th>
             </tr>
@@ -69,7 +69,8 @@
                 </td>
             </tr>
     </table>
-    <div style="display: flex;"><button type="button" id="regFMbtn" @click="reg_FleaMarket"> 게시글 등록 </button></div>
+    <!-- <div style="display: flex;"><button type="button" id="regFMbtn" @click="reg_FleaMarket"> 게시글 등록 </button></div> -->
+    <div style="display: flex;"><button type="button" id="regFMbtn" @click="check"> 게시글 등록 </button></div>
   </div>
   </div>
 </template>
@@ -267,9 +268,9 @@ export default  {
                                         <p>또한 신청시 개인정보 수집 및 이용 동의한 것으로 간주됩니다.</p>
 
                                         <p>(핸드폰번호, 신청자명 / 이용 목적 : 본인 식별 및 신청 내용 통보 / 유효기간 : 행사 종료 후)</p>`,
-                address: ''
+                
             },
-            address : '',
+            
             monthDate: null,
             lang: {
                 days: ["일", "월", "화", "수", "목", "금", "토"],
@@ -289,7 +290,8 @@ export default  {
     
     methods:{
         //주소
-         sample6_execDaumPostcode() {
+        //주소API
+        sample6_execDaumPostcode() {
 
             new daum.Postcode({
                 oncomplete: function (data) {
@@ -328,17 +330,18 @@ export default  {
                     } else {
                         document.getElementById("sample6_extraAddress").value = '';
                     }
-                   
+
                     // 우편번호와 주소 정보를 해당 필드에 넣는다.
                     document.getElementById('sample6_postcode').value = data.zonecode;
                     document.getElementById("sample6_address").value = addr;
                     // 커서를 상세주소 필드로 이동한다.
                     document.getElementById("sample6_detailAddress").focus();
-                    
                 }
-
-
             }).open();
+
+            
+
+
         },
         //파일 미리보기 처리 -> inputFiles()로가서 파일데이터 담아줌
         readInputFile(e){
@@ -360,7 +363,7 @@ export default  {
                 };
                 reader.readAsDataURL(f);
             })
-            //this.inputFiles();
+            this.inputFiles();
         },
         //data에 파일 담아줌
         inputFiles() {
@@ -369,7 +372,21 @@ export default  {
             console.log(this.FleaMarket.FormData)
         },
         check(){
+        
+
+            this.FleaMarket.address = $('#sample6_address').val();
+            console.log('dadsadasd',typeof($('#Datepicker').val()));
+            //this.FleaMarket.endDate = $('#Datepicker').val();
+            
+           console.log(this.FleaMarket.userno)
+           console.log(this.FleaMarket.email)
+           console.log(this.FleaMarket.title)
+           console.log(this.FleaMarket.endDate)
+           console.log(this.FleaMarket.address)
+           console.log(this.FleaMarket.FormData)
+           console.log(this.FleaMarket.approvalCnt)
            console.log(this.FleaMarket.content)
+           
         }
         
        

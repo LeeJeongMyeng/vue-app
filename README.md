@@ -34,3 +34,13 @@ npm install axios
  npm install vuex-persistedstate
  npm install @mayasabha/ckeditor4-vue3
  npm i vue3-datepicker
+
+
+
+
+
+
+
+ ## 참고사항
+
+ 주소api사용시에 v-model에 적용이 안되어서 기본 value속성에만 적용해놓고 완료시에 데이터 적용하도록함
