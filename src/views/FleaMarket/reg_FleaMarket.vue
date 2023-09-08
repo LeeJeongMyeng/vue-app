@@ -12,7 +12,9 @@
             </tr>
             <tr>
              <th>글제목 </th>
-                 <td colspan="2"> <input type="text" v-model="FleaMarket.title" id="title" placeholder="홍길동"  autocomplete=”off”> </td>
+                 <td colspan="2"> <span>*최소 10자 이상입니다</span> 
+                    <input type="text" v-model="FleaMarket.title" id="title" placeholder="홍길동"  autocomplete=”off”>
+                 </td>
             </tr>
             <tr>
                 <th> 신청마감일자 </th>
@@ -25,10 +27,10 @@
                         <td> 
                         <div style="display: flex;">
                         <input type="hidden" id="sample6_postcode" placeholder="우편번호" readonly>
-                        <input type="button" id="sample6_btn" @click="sample6_execDaumPostcode()" value="우편번호 찾기"><br>
+                        <input type="button" id="sample6_btn" @click="sample6_execDaumPostcode()" value="주소 찾기"><br>
                         </div> 
                         <input type="text" id="sample6_address" placeholder="주소" readonly><br>
-                        <input type="hidden" id="sample6_detailAddress" placeholder="상세주소">
+                        <input type="text" id="sample6_detailAddress" placeholder="상세주소">
                         <input type="hidden" id="sample6_extraAddress" placeholder="참고항목" readonly>
                         </td>
                     </tr>
@@ -44,8 +46,10 @@
             </tr>
             <tr>
                <td style="padding: 10px">
+                
                 <input id="customFile" type="file" ref="files" @change="readInputFile" multiple accept="image/*"/>
                </td>
+               <td><span>*썸네일을 위해 최소 한장 이상의 사진 등록부탁드립니다.*</span></td>
             </tr>
             <tr>
                 <td colspan='3'>
@@ -55,7 +59,7 @@
                 </td>
             </tr>
     </table>
-    <div style="display: flex;"><button type="button" id="regFMbtn" @click="reg_FleaMarket"> 게시글 등록 </button></div>
+    <div style="display: flex;"><button type="button" id="regFMbtn" @click="Check_Reg"> 게시글 등록 </button></div>
     <!-- <div style="display: flex;"><button type="button" id="regFMbtn" @click="check"> 게시글 등록 </button></div> -->
   </div>
   </div>
@@ -88,7 +92,6 @@ export default  {
         return {
             common:{
                 uploadimageurl: [],    // 업로드한 이미지의 미리보기 기능을 위해 url 저장하는 객체
-                imagecnt: 0,
                 imagelist: [],        // 불러온 이미지들의 url을 저장하는 객체
                 imagecnt: 0,
                 FormData: '', //파일 
@@ -105,7 +108,8 @@ export default  {
                 title: '', // 제목
                 endDate: '', //게시글 종료날짜
                 address:'',
-                approvalCnt:0, //모집인원수
+                detailAddress:'',
+                approvalCnt:10, //모집인원수
                 content: `<div style="background:#eeeeee;border:1px solid #cccccc;padding:5px 10px;">개요<br />
                                         &nbsp;</div>
 
@@ -348,61 +352,84 @@ export default  {
                 };
                 reader.readAsDataURL(f);
             })
-            this.inputFiles();
+            //data에 파일 담아줌
+           this.common.FormData = this.$refs.files.files
         },
-        //data에 파일 담아줌
-        inputFiles() {
-            this.common.FormData = this.$refs.files.files
+        Check_Reg(){
 
-            //console.log(this.common.FormData)
+             // console.log(this.FleaMarket.userno)
+            // console.log(this.FleaMarket.email)
+            // console.log(this.FleaMarket.title)
+            // console.log(this.FleaMarket.endDate)
+            // console.log(this.FleaMarket.address)
+            // console.log(this.FleaMarket.approvalCnt)
+            // console.log(this.FleaMarket.content)
+             this.FleaMarket.address = $('#sample6_address').val();
+            this.FleaMarket.detailAddress = $('#sample6_detailAddress').val();
+            
+
+           
+
+            if(this.FleaMarket.title =='' || this.FleaMarket.title.length<10){
+                alert('제목은 5자이상 입력 부탁드립니다.')
+                return false;
+            }else if(this.FleaMarket.endDate == ''){
+                alert('모집 마감 일자를 선택해주세요')
+                return false;
+            }else if(this.FleaMarket.approvalCnt=='' || this.FleaMarket.approvalCnt < 10){
+                alert('모집인원은 최소 10명 이상입니다.')
+                return false;
+            }else if(this.FleaMarket.address ==''){
+                alert('행사 진행 장소 선택 부탁드립니다.')
+                return false;
+            }else if(this.FleaMarket.content == ''){
+                alert('모집 설명글 작성 부탁드립니다.')
+                return false;
+            }else if(this.common.FormData.length <= 0 || this.common.FormData == ''){
+                alert('썸네일을 위해 최소 하나의 이미지는 등록 부탁드립니다.')
+                return false;
+            }
+
+            this.reg_FleaMarket();
         },
+        //게시글 등록
         reg_FleaMarket(){
-
-
-            //주소 삽입 => 주소api로 데이터를 받으면 v-model에 적용안된다.
-                 this.FleaMarket.address = $('#sample6_address').val();
-               
-
-                    // console.log(this.FleaMarket.userno)
-                    // console.log(this.FleaMarket.email)
-                    // console.log(this.FleaMarket.title)
-                    // console.log(this.FleaMarket.endDate)
-                    // console.log(this.FleaMarket.address)
-                    // console.log(this.FleaMarket.approvalCnt)
-                    // console.log(this.FleaMarket.content)
-
-
+            console.log('reg_FleaMarket')
                 axios.post('/ctg/reg_FleaMarket', this.FleaMarket)
                 .then((res) => {
                     console.log(res)
-                    
+                    if(res!=0){
+                        this.ref_FleaMarket_files();
+                    }
                 })
                 .catch((err) => console.log(err))
-                this.check();
+                //this.ref_FleaMarket_files();
         },
-        check(){
-        
+        //파일 등록
+        ref_FleaMarket_files(){
             const formData = new FormData();
-           
-            for (let i = 0; i < this.common.FormData.length; i++) {
-                console.log('zz',this.common.FormData[i])
-                formData.append("files", this.common.FormData[i]);
-            }
+            //파일이 있을경우
             
-           
-
-            axios.post('/ctg/reg_FleaMarket_files', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
+                for (let i = 0; i < this.common.FormData.length; i++) {
+                    console.log('zz',this.common.FormData[i])
+                    formData.append("files", this.common.FormData[i]);
                 }
-            })
-                .then((response) => {
-                    console.log(response)
+
+                axios.post('/ctg/reg_FleaMarket_files', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
                 })
-                .catch((error) => {
-                    console.log(error)
-                })
-           
+                    .then((response) => {
+                        console.log(response)
+                        re
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+            
+           alert('등록 완료 되었습니다.')
+           this.$router.push('/');
         }
         
        
@@ -501,7 +528,11 @@ export default  {
     color: white;
    }
     
-
+   table tr td>span{
+    font-size: 12px;
+    color: red;
+    font-weight: bold;
+   }
 
 
 

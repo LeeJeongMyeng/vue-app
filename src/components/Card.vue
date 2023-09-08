@@ -12,12 +12,5 @@ export default {
 </script>
 
 <style>
-    .cardBox{
-        width : 400px;
-        height: 400px;
-        background: gray;
-        padding : 10px;
-        margin: 50px 10px;
-        flex-wrap: wrap;
-    }
+    
 </style>

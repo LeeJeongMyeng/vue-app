@@ -5,9 +5,8 @@ export default createStore({
   state: {
     bool: false,
     member: "",
-    member2:{
-      userno:202020
-    }
+    currentPage:1
+    
   },
   //state값을 변경하는 로직
   mutations: {
@@ -34,7 +33,7 @@ export default createStore({
   plugins: [
     createPersistedState({
       //주목! : 여기에 쓴 모듈만 저장됩니다.
-      paths: ["bool", "member"],
+      paths: ["bool", "member","currentPage"],
     }),
   ],
 });

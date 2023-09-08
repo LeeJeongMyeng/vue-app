@@ -76,28 +76,7 @@ export default {
                 Regular_Expression = /[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[.0-9a-zA-Z])*.[a-zA-Z]$/i;
                 result = (Regular_Expression.test(value) && value != '');
             } 
-            // else if (key == 'rrn') {
-            //     Regular_Expression = /^(?:[0-9]{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[1,2][0-9]|3[0,1]))-[1-4][0-9]{6}$/;
-            //     result = (value.length == 14 && (Regular_Expression.test(value)));
-            //     console.log(value.length + ':' + Regular_Expression.test(value));
-            // } else if (key == 'password') {
-            //     const pw = value;
-            //     const num = pw.search(/[0-9]/g); //숫자확인
-            //     const eng = pw.search(/[a-z]/ig); //영어확인
-            //     const spe = pw.search(/[`~!@@#$%^&*|₩₩₩'₩';:₩/?]/gi); //특수문자확인
-            //     if (pw.length < 8 || pw.length > 16) { //비밀번호 길이확인
-            //         result = false;
-            //     } else if (pw.search(/\s/) != -1) { //공백확인
-            //         result = false;
-            //     } else if ((num < 0 && eng < 0) || (eng < 0 && spe < 0) || (spe < 0 && num < 0)) { //두가지 조합 혼합 확인
-            //         result = false;
-            //     } else {
-            //         result = true;
-            //     }
-            // } else if ('PhoneNumber') {
-            //     Regular_Expression = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
-            //     result = ((value.length == 11 || value.length == 10) && (Regular_Expression.test(value)));
-            // }
+            
 
             return result;
 
