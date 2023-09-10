@@ -13,7 +13,7 @@
                     <li>password</li>
                      <!-- <li>비밀번호찾기</li> -->
                 </ul>
-                <input type="password" id="SignIn_pwd" v-model="User.password" autocomplete="off"><br>
+                <input type="password" id="SignIn_pwd" v-model="User.password" @keyup.enter="SignIn" autocomplete="off"><br>
                 <button type="button" class="SignIn_btn" @click="SignIn">로그인</button>
             </div>
             <button type="button" class="SignUp_btn" @click="Go_To_SignUp">회원가입</button>
@@ -90,7 +90,7 @@ export default {
     .signInContainer{
         display: flex;
         margin-top: -7px;
-        min-width:2000px;
+        /* min-width:2000px; */
     }
 
     /* ============================================================================================================================================== */

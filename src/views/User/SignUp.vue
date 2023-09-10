@@ -10,13 +10,6 @@
                     <td> <input type="text" id="SignUp_name" placeholder="홍길동" v-model="User.name" :class="active_css.name" autocomplete=”off”> </td>
                 </tr>
                 <tr>
-                    <th> 주민등록번호 </th>
-                    <td> <input type="text" id="SignUp_frrn" placeholder="앞 6자리" v-model="Common.frrn" :class="active_css.frrn" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="6">
-                         -
-                         <input type="text" id="SignUp_brrn" placeholder="뒤 7자리" v-model="Common.brrn" maxlength="7" :class="active_css.brrn" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" autocomplete=”off”> </td>
-                    <td> <button @click="Check_SignUp_name">중복확인</button></td>
-                </tr>
-                <tr>
                     <th>이메일</th>
                     <td> <input type="text" id="SignUp_email" placeholder="Enter your Email" v-model="User.email" :class="active_css.email" ></td>
                     <td> <button @click="Check_SignUp_email">메일인증</button></td>
@@ -97,7 +90,6 @@ export default {
                     , password: '' //패스워드
                     , password2: '' //패스워드확인
                     , name: '' //이름
-                    , personalNumber : '' //주민번호
                     , phoneNumber : '' //핸드폰번호
                     , postcode : '' //우편번호
                     , address : '' //주소
@@ -125,8 +117,6 @@ export default {
                   email: false //이메일
                 , password: false  //패스워드
                 , password2: false  //패스워드2
-                , name: false  //이름
-                , personalNumber: false  //주민번호
                 , phoneNumber: false  //핸드폰번호
                 , address: false  //주소
                 , bnCheck: true  //가입유형(사업자유무)
@@ -142,69 +132,10 @@ export default {
         cancle() {
             this.$router.push({ name: 'home' })
         },
-        // name/personalNumber => duplicates in DataBase
-        Check_SignUp_name(){
-            let personalNumber = this.Common.frrn + '-' + this.Common.brrn;
-            // name's length check
-            const CheckNname = (this.User.name.length > 1 || this.User.name.length < 6);
-            // personalNumber Check
-            console.log(personalNumber+":"+personalNumber.length);
-            const CheckRrn = this.Check_Regular_Expression('rrn', personalNumber);
-            console.log("이름주민확인", CheckNname,CheckRrn);
-            
-            if(CheckNname && CheckRrn){
-                const UserInfo = {
-                    name : this.User.name,
-                    personalNumber : personalNumber
-                }
-
-                //Check duplicates in DB with name,rrn value
-                axios.post('/ctg/Check_SignUp_name', UserInfo)
-                    .then((res) => {
-                        console.log(res)
-                        if (res.data.checkNum == 0) {
-                            this.CheckInfo.name = true;
-                            this.CheckInfo.personalNumber = true;
-                            this.User.personalNumber = personalNumber;
-                            $('#SignUp_name,#SignUp_frrn,#SignUp_brrn').attr('readonly',true);
-                            this.active_css.name = 'active_valid';
-                            this.active_css.frrn = 'active_valid';
-                            this.active_css.brrn = 'active_valid';
-                            alert('중복확인 되었습니다.')
-
-                        } else {
-                            alert('가입한 계정이 존재합니다.')
-                            this.User.name = '';
-                            this.Common.frrn = '';
-                            this.Common.brrn = '';
-                            $('#SignUp_name').focus();
-                            this.active_css.name = 'active_invalid';
-                            this.active_css.frrn = 'active_invalid';
-                            this.active_css.brrn = 'active_invalid';
-                            return false;
-                        }
-                    })
-                    .catch((err) => console.log(err))
-            }else{
-                alert('이름(2~5자)과 주민번호를 올바르게 입력 부탁드립니다.');
-                this.active_css.name = 'active_invalid';
-                this.active_css.frrn = 'active_invalid';
-                this.active_css.brrn = 'active_invalid';
-                $('#SignUp_name').focus();
-            }
-        },
-        //Email_Form_Check
+        
+        //이메일 양식확인-> 중복-> 이메일보내기
         Check_SignUp_email(){
             
-            const Check1 = (this.CheckInfo.name && this.CheckInfo.personalNumber)
-            if(!Check1){
-                alert('이름/주민번호 중복검사 완료 후 진행 부탁드립니다.');
-                this.active_css.name = 'active_invalid';
-                this.active_css.frrn = 'active_invalid';
-                this.active_css.brrn = 'active_invalid';
-                $('#SignUp_name').focus();
-                return false;
-            } 
 
             //정규식검사 진행
             const UserEmail = this.User.email;
@@ -216,7 +147,7 @@ export default {
                 return false;
             }
             
-            //email => duplicates in DataBase
+          //  이메일 중복검사
             axios.post('/ctg/Check_SignUp_email', { email: UserEmail })
                 .then((res) => {
                     console.log(res)
@@ -240,9 +171,9 @@ export default {
 
             
         },
-        //Send auth-code through ‘EmailJS’
+        //이메일 보낼준비
         Send_Email(){
-            //Generate 6-character random numbers
+            //6자 난수생성
             let SixRanNum = ""; 
             SixRanNum = ""
             for (let i = 0; i < 6; i++) {
@@ -259,7 +190,7 @@ export default {
 
             }
             
-            //Area responsible for sending Email
+            //이메일 보내기
             emailjs.send('service_ee7pra4', 'template_azph6ba', templateParams)
                 .then((response) => {
                     this.Common.Send_Email=true;
@@ -276,7 +207,7 @@ export default {
                 console.log(this.Common.Send_Email)
 
         },
-        //Check auth_Email_Code of Send_Email Mehtod.
+        //이메일 코드 확인
         Check_Email_Code(){
 
             const check = (this.Common.Email_Code == $('#SignUp_email_code').val());
@@ -294,7 +225,7 @@ export default {
             
 
         },
-        // password's Validation
+        // 비밀번호 양식확인
         Check_Pwd_Regular(){
             const pwd = this.User.password
             const check = this.Check_Regular_Expression('password', pwd);
@@ -308,7 +239,7 @@ export default {
             }
 
         },
-        // password2's Validation
+        // 비밀번호 확인
         Check_Pwd_Regular2(){
             let Check = this.User.password == this.User.password2;
 
@@ -390,6 +321,7 @@ export default {
             
 
         },
+        //주소 입력했는지 확인
         Check_address(){
             return this.CheckInfo.address = $('#sample6_postcode').val() != '';
         },
@@ -401,13 +333,10 @@ export default {
             this.User.extraAddress = $('#sample6_extraAddress').val();
             this.User.detailAddress = $('#sample6_detailAddress').val();
         },
-        // Success_detailAddress(){
-        //     
-        // },
 
 
 
-        //Method executed when selecting a 'input[type=radio]'
+        //가입유형 선택 처리(css 및 date할당)
         bnCheck(event) {
             if (event.target.value == 0) {
                 //회원가입시 확인할 사업자부분 check
@@ -481,7 +410,7 @@ export default {
             return result;
 
         },
-        //When clicked 'SignUp Complete'.
+        //가입완료 클릭시 진행
         Check_SignUp_form(){
             
             
@@ -491,12 +420,13 @@ export default {
 
             //유효성검사 전부 완료가 되었는지 확인
              const ChekcInfo = this.CheckInfo;
+             //data배열의 이름들
             const CheckInfo2_key = Object.keys(this.CheckInfo);
 
             const UserInf = this.User;
             const UserInf_kyes = Object.keys(this.CheckInfo);
 
-            //데이터베이스에 입력될 데이터들 확이
+            //데이터베이스에 입력될 데이터들 확인
             UserInf_kyes.forEach(key => {
                 console.log('User',key, ':', UserInf[key]);
             })

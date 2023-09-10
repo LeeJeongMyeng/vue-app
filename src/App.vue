@@ -2,15 +2,17 @@
   <div>
     <Header :data="data" />
     <router-view/>
+    <Footer :data="data"/>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
-  import Header from './components/Header.vue'
+  import axios from 'axios'
+  import Header from './components/Header.vue';
+  import Footer from "./components/Footer.vue";
   import { watch } from "vue";
-import { useRoute } from 'vue-router'
-import store from '@/store';
+  import { useRoute } from 'vue-router';
+import store from '@/store'
 
   export default {
     data(){
@@ -18,18 +20,7 @@ import store from '@/store';
         data : true
       }
     },
-    created() {
-    //   const user = sessionStorage.getItem('setUser')
-    //  // console.log('AppVue:'+JSON.parse(user))
-    //   if(user){
-    //     //console.log(user, this.base64(user))
-    //     this.$store.commit('setUser',this.base64(user))
-    //   }
-
-    
-
-      //const route = useRoute();
-    },
+   
     
     setup() {
     const token_check = () => {
@@ -56,7 +47,8 @@ import store from '@/store';
       }
     },
     components:{
-      'Header' : Header
+      'Header' : Header,
+      'Footer' : Footer
     }
   }
 </script>
