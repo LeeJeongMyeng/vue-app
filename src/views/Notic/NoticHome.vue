@@ -13,7 +13,7 @@
           </thead>
 
           <tbody id="Notic_tbody">
-            <tr style="height: 32px; font-weight: bold;" v-for="item in Notic_List" :key="item.ntno" @click="get_DetailNotic(item.ntno)">
+            <tr style="height: 32px; font-weight: bold;" v-for="item in Notic_List.noticList" :key="item.ntno" @click="get_DetailNotic(item.ntno)">
                   <td>{{ item.ntno }}</td>
                   <td>
                     <span v-if="item.impWhether" style="color: red;">중요글</span>
@@ -35,9 +35,19 @@
                     <option value = "2">제목</option>
                     <option value = "3">내용</option>
                 </select> 
-              <label for="search-input" @keyup.enter="get_Notic_List">검색:</label>
-              <input type="text" id="search-input" name="search" v-model="Search.title">
-              
+              <label for="search-input" >검색:</label>
+              <input type="text" id="search-input" name="search" @keyup.enter="search" v-model="Search.title">
+              <div class="pagination-container">
+                <div>
+                    <button  @click="prevPage" class="page-btn">
+                      이전
+                    </button>
+                    <span class="page-count">{{ this.$store.state.currentPage }} / {{ Notic_List.totPage }} 페이지</span>
+                    <button  @click="nextPage" class="page-btn">
+                      다음
+                    </button>
+                </div>
+              </div>
            </div>  
         </div>
     </div>
@@ -56,8 +66,10 @@ export default  {
      
     },
     created(){
-        this.get_Notic_List();
         
+        
+        //this.$store.state.currentPage=1
+
     },
     
     data() {
@@ -68,7 +80,9 @@ export default  {
             //검색용 데이터
             Search:{
                 title:'', 
-                Search_Mode : '1'
+                Search_Mode : '1',
+                currentPage: '',
+                
             }
         }
     },
@@ -78,20 +92,50 @@ export default  {
     mounted(){
         // 검색 select태그 활성화
       this.Search_Mode = '1';
+      this.get_Notic_List();
     },
     
     methods:{
+      search() {
+      this.$store.state.currentPage = 1
+      this.get_Notic_List();
+    },
         //create를 통해서 공지사항 정보 가져오기
         get_Notic_List(){
+      console.log('후 curpage', this.$store.state.currentPage)
+          this.Search.currentPage = this.$store.state.currentPage
+          this.$store.state.title = this.Search.title
+
             axios.post('/ctg/get_Notic_List',this.Search)
             .then((res) => {
                 console.log(res);
-                this.Notic_List = res.data.Notic_List.noticList;
+                this.Notic_List = res.data.Notic_List;
             }).catch((err) => console.log(err))
+        },
+        //이전페이지
+        prevPage() {
+      //현재 페이지
+          if (this.$store.state.currentPage == 1) {
+            return false;
+          } else {
+            this.$store.dispatch('MinusCurrentPage');
+            this.get_Notic_List();
+          }
+        },
+    //다음페이지
+        nextPage() {
+          console.log('변경전 curpage',this.$store.state.currentPage)
+          if (this.$store.state.currentPage == this.Notic_List.totPage) {
+            return false;
+          } else {
+            this.$store.dispatch('PlusCurrentPage');
+            console.log("nextpage", this.$store.state.currentPage);
+            this.get_Notic_List();
+          }
         },
         //상세조회로 이동
         get_DetailNotic(ntno){
-           this.$router.push({ name: 'get_DetailNotic', query: { ntno: ntno } });
+           this.$router.push({ name: 'get_Notic', query: { ntno: ntno } });
         }
     }
 }

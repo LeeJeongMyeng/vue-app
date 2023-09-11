@@ -37,6 +37,11 @@ const routes = [
     name: "Notic_Home",
     component: () => import("../views/Notic/NoticHome.vue"),
   },
+  {
+    path: "/ctg/get_Notic",
+    name: "get_Notic",
+    component: () => import("../views/Notic/get_Notic.vue"),
+  },
 ];
 
 const router = createRouter({
