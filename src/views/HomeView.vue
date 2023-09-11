@@ -59,7 +59,6 @@ export default {
     }
   },
   created() {
-     this.get_FleaMarket_List(1);
      
   },
  
@@ -78,7 +77,8 @@ export default {
   setup() {
   },
   mounted() {
-    
+     this.get_FleaMarket_List(1);
+
   },
 
   methods: {
@@ -95,6 +95,7 @@ export default {
         
         console.log('start-currentPage', this.$store.state.currentPage);
         console.log('start-currentPage', this.$store.state.title);
+        
         axios.post('/ctg/get_FleaMarket_List',this.Fleamarket)
         .then((response) => {
           console.log("totpage",response.data.FleamarketList.totPage)
@@ -102,6 +103,7 @@ export default {
             this.$store.state.currentPage=0;
           }
           console.log(response.data)
+
           this.FleaMarketList = response.data.FleamarketList;
           
 

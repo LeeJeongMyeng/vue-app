@@ -1,0 +1,176 @@
+<template>
+    <div id="Notic_Container">
+        <h1>공지사항</h1>
+        <table class="Notic_Table">
+          <thead id="Notic_thead">
+            <tr style="height: 32px; font-weight: bold;">
+              <th style="width: 10%;">No</th>
+              <th style="width: 13%;">중요도</th>
+              <th style="width: 48%;">제목</th>
+              <th style="width: 15%;">작성일</th>
+              <th style="width: 15%;">수정일</th>
+            </tr>
+          </thead>
+
+          <tbody id="Notic_tbody">
+            <tr style="height: 32px; font-weight: bold;" v-for="item in Notic_List" :key="item.ntno" @click="get_DetailNotic(item.ntno)">
+                  <td>{{ item.ntno }}</td>
+                  <td>
+                    <span v-if="item.impWhether" style="color: red;">중요글</span>
+                    <span v-else>일반글</span>
+                  </td>
+                  <td style="text-align: left;"><span style="color: red;">&#60;공지&#62;</span>{{ item.title }}</td>
+                  <td>{{ item.regDate }}</td>
+                  <td>{{ item.uptDate }}</td>
+                  <td>{{ item.delDate }}</td>
+                </tr>
+          </tbody>
+
+        </table>
+        <div id="Search_Container">
+           <div class="SearchBox">
+                <label for ="status-select">검색내용:</label>
+                <select id = "status-select" name = "Search_Mode" v-model="Search_Mode">
+                    <option value = "1">제목+내용</option>
+                    <option value = "2">제목</option>
+                    <option value = "3">내용</option>
+                </select> 
+              <label for="search-input" @keyup.enter="get_Notic_List">검색:</label>
+              <input type="text" id="search-input" name="search" v-model="Search.title">
+              
+           </div>  
+        </div>
+    </div>
+</template>
+
+<script>
+import axios from "axios";
+
+export default  {
+    
+    name:'NoticHome',
+    components:{
+
+    },
+    computed:{
+     
+    },
+    created(){
+        this.get_Notic_List();
+        
+    },
+    
+    data() {
+        return {
+            //공지사항 리스트
+            Notic_List:'',
+
+            //검색용 데이터
+            Search:{
+                title:'', 
+                Search_Mode : '1'
+            }
+        }
+    },
+    setup() {
+
+    },
+    mounted(){
+        // 검색 select태그 활성화
+      this.Search_Mode = '1';
+    },
+    
+    methods:{
+        //create를 통해서 공지사항 정보 가져오기
+        get_Notic_List(){
+            axios.post('/ctg/get_Notic_List',this.Search)
+            .then((res) => {
+                console.log(res);
+                this.Notic_List = res.data.Notic_List.noticList;
+            }).catch((err) => console.log(err))
+        },
+        //상세조회로 이동
+        get_DetailNotic(ntno){
+           this.$router.push({ name: 'get_DetailNotic', query: { ntno: ntno } });
+        }
+    }
+}
+
+</script>
+
+<style scoped> 
+
+  #Search_Container {
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100px;
+    justify-content: center;
+  }
+  #Notic_Container>h1{
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    padding: 28px;
+  }
+
+  .SearchBox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin: 10px auto;
+    width: 1400px;
+  }
+  .SearchBox label {
+     font-size: 17px;
+     font-weight:bold;
+     margin-right: 5px; 
+   }
+   
+   .SearchBox select {
+        margin-right: 45px;
+        height: 35px;
+        width: 100px;
+   }
+   .SearchBox input{
+    margin-right: 45px;
+        height: 27px;
+        width: 200px;
+   }
+
+
+ #Notic_Container {
+     margin: auto;
+     width: 1900px;
+     min-height: 600px;
+
+ }
+
+ .Notic_Table {
+    table-layout: fixed;
+    width: 80%;
+    margin: 0 auto;
+     border: 1px solid #ccc;
+     border-collapse: collapse;
+ }
+
+ #Notic_thead{
+     padding: .5rem;
+     color: white;
+      background-color: rgb(56, 56, 56);
+    
+ }
+
+
+ 
+.Notic_Table td {
+    text-align:center;
+     border-bottom: 1px solid #ccc;
+} 
+
+
+
+ </style> 

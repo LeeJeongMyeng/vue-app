@@ -8,7 +8,7 @@
              <ul class="nav" id="header-nav1">
                 <li class="Header_Menu" @click="Go_to_Page('/')">홈</li>
                 <li class="Header_Menu" @click="Check_User_BN">플리마켓등록</li>
-                <li class="Header_Menu" @click="Go_to_Page('/')">공지사항</li>
+                <li class="Header_Menu" @click="Go_to_Page('/ctg/Notic_Home')">공지사항</li>
                 <!-- 로그인아이디가 있으면 보여진다. -->
                  <!-- v-if="!$store.state.account.member" -->
                  <!-- v-if="$store.state.bool == false" -->

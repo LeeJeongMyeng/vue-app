@@ -8,11 +8,6 @@ const routes = [
     component: HomeView,
   },
   {
-    path: "/user",
-    name: "ListView",
-    component: () => import("../views/ListView.vue"),
-  },
-  {
     path: "/user/signIn",
     name: "SignIn",
     component: () => import("../views/User/SignIn.vue"),
@@ -36,6 +31,11 @@ const routes = [
     path: "/ctg/upt_FleaMarket",
     name: "upt_FleaMarket",
     component: () => import("../views/FleaMarket/upt_FleaMarket.vue"),
+  },
+  {
+    path: "/ctg/Notic_Home",
+    name: "Notic_Home",
+    component: () => import("../views/Notic/NoticHome.vue"),
   },
 ];
 

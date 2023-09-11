@@ -49,97 +49,97 @@
                 <!-- 모달 내용 -->
                 <div>
                 <h1>대기 신청자</h1>
-                    <table class="modal_application_table">
+                    <table class="modal_application_tableH">
                         <thead>
                             <tr>
-                            <th class="application_table_th" style="width: 13%;">회원 번호</th>
-                            <th class="application_table_th" style="width: 13%;">이름</th>
-                            <th class="application_table_th" style="width: 20%;">이메일</th>
-                            <th class="application_table_th" style="width: 18%;">연락처</th>
-                            <th class="application_table_th" style="width: 20%;">주소</th> 
-                            <th class="application_table_th" style="width: 19%;">비고</th> 
+                            <th class="application_table_th" style="width: 11%;">회원 번호</th>
+                            <th class="application_table_th" style="width: 11%;">이름</th>
+                            <th class="application_table_th" style="width: 16%;">이메일</th>
+                            <th class="application_table_th" style="width: 16%;">연락처</th>
+                            <th class="application_table_th" style="width: 18%;">주소</th> 
+                            <th class="application_table_th" style="width: 13%;">신청날짜</th> 
+                            <th class="application_table_th" style="width: 15%;">비고</th> 
                             </tr>
                         </thead>
                     </table>
                     <div class="application_tbody">
                     <table class="modal_application_table">
                     <tbody>
-                            <tr>
-                                <td>2023080302</td>
-                                <td>이정명</td>
-                                <td>aoddl56@nate.com</td>
-                                <td>010-5293-247</td>
-                                <td>서울특별시 영등포구</td>
-                                <td><div></div><button  class="application_btn approve-button" @click="application_FM('승인','2023080101')">승인</button><button class="application_btn reject-button"  @click="application_FM('거절', '2023080101')">거절</button></td>
+                            <tr v-for="item in wait_appliication_FM" :key="item.userno">
+                                <td style="width: 11%;">{{ item.userno }}</td>
+                                <td style="width: 11%;">{{ item.name }}</td>
+                                <td style="width: 16%;">{{ item.email }}</td>
+                                <td style="width: 16%;">{{ item.phoneNumber }}</td>
+                                <td style="width: 18%;">{{ item.address }}</td>
+                                <td style="width: 15%;">{{ item.regDate }}</td>
+                                <td style="width: 13%;"><div></div><button  class="application_btn approve-button" @click="approval_FM('승인', item.userno)">승인</button><button class="application_btn reject-button"  @click="approval_FM('거절', item.userno)">거절</button></td>
                             </tr>
-                            
-                           
                         </tbody>   
                     </table>
                     </div>
                 </div>
                 <div>
                 <h1>승인된 신청자</h1>
-                    <table class="modal_application_table">
+                    <table class="modal_application_tableH">
                         <thead>
                             <tr>
-                            <th class="application_table_th" style="width: 13%;">회원 번호</th>
-                            <th class="application_table_th" style="width: 13%;">이름</th>
-                            <th class="application_table_th" style="width: 20%;">이메일</th>
-                            <th class="application_table_th" style="width: 18%;">연락처</th>
-                            <th class="application_table_th" style="width: 20%;">주소</th> 
-                            <th class="application_table_th" style="width: 19%;">비고</th> 
+                            <th class="application_table_th" style="width: 11%;">회원 번호</th>
+                            <th class="application_table_th" style="width: 11%;">이름</th>
+                            <th class="application_table_th" style="width: 16%;">이메일</th>
+                            <th class="application_table_th" style="width: 16%;">연락처</th>
+                            <th class="application_table_th" style="width: 18%;">주소</th> 
+                            <th class="application_table_th" style="width: 13%;">신청날짜</th> 
+                            <th class="application_table_th" style="width: 15%;">비고</th> 
                             </tr>
                         </thead>
                     </table>
                     <div class="application_tbody">
                     <table class="modal_application_table">
                     <tbody>
-                            <tr>
-                                <td>2023080302</td>
-                                <td>이정명</td>
-                                <td>aoddl56@nate.com</td>
-                                <td>010-5293-247</td>
-                                <td>서울특별시 영등포구</td>
-                                <td><div></div><button class="application_btn reject-button" @click="application_FM('거절', '2023080101')">거절</button><button class="application_btn wait-btn" @click="application_FM('대기', '2023080101')">대기</button></td>
+                            <tr v-for="item in approval_appliication_FM" :key="item.userno">
+                                <td style="width: 11%;">{{ item.userno }}</td>
+                                <td style="width: 11%;">{{ item.name }}</td>
+                                <td style="width: 16%;">{{ item.email }}</td>
+                                <td style="width: 16%;">{{ item.phoneNumber }}</td>
+                                <td style="width: 18%;">{{ item.address }}</td>
+                                <td style="width: 15%;">{{ item.regDate }}</td>
+                                <td><div></div><button class="application_btn reject-button" @click="approval_FM('거절', item.userno)">거절</button><button class="application_btn wait-btn" @click="approval_FM('대기', item.userno)">대기</button></td>
                             </tr>
-                           
                         </tbody>   
                     </table>
                     </div>
                 </div>
                 <div>
-                <h1>거절된 신청자</h1>
-                    <table class="modal_application_table">
-                        <thead>
-                            <tr>
-                            <th class="application_table_th" style="width: 13%;">회원 번호</th>
-                            <th class="application_table_th" style="width: 13%;">이름</th>
-                            <th class="application_table_th" style="width: 20%;">이메일</th>
-                            <th class="application_table_th" style="width: 18%;">연락처</th>
-                            <th class="application_table_th" style="width: 20%;">주소</th> 
-                            <th class="application_table_th" style="width: 19%;">비고</th> 
-                            </tr>
-                        </thead>
-                    </table>
-                    <div class="application_tbody">
-                    <table class="modal_application_table">
-                    <tbody>
-                           <tr>
-                                <td>2023080302</td>
-                                <td>이정명</td>
-                                <td>aoddl56@nate.com</td>
-                                <td>010-5293-247</td>
-                                <td>서울특별시 영등포구</td>
-                                <td><div></div><button  class="application_btn approve-button" @click="application_FM('승인', '2023080101')">승인</button><button  class="application_btn wait-btn" @click="application_FM('대기', '2023080101')">대기</button></td>
-                            </tr>
-                          
-                        </tbody>   
-                    </table>
+                    <h1>거절된 신청자</h1>
+                        <table class="modal_application_tableH">
+                            <thead>
+                                <tr>
+                                <th class="application_table_th" style="width: 11%;">회원 번호</th>
+                                <th class="application_table_th" style="width: 11%;">이름</th>
+                                <th class="application_table_th" style="width: 16%;">이메일</th>
+                                <th class="application_table_th" style="width: 16%;">연락처</th>
+                                <th class="application_table_th" style="width: 18%;">주소</th> 
+                                <th class="application_table_th" style="width: 13%;">신청날짜</th> 
+                                <th class="application_table_th" style="width: 15%;">비고</th> 
+                                </tr>
+                            </thead>
+                        </table>
+                        <div class="application_tbody">
+                        <table class="modal_application_table">
+                        <tbody>
+                                <tr v-for="item in reject_appliication_FM" :key="item.userno">
+                                    <td style="width: 11%;">{{ item.userno }}</td>
+                                    <td style="width: 11%;">{{ item.name }}</td>
+                                    <td style="width: 16%;">{{ item.email }}</td>
+                                    <td style="width: 16%;">{{ item.phoneNumber }}</td>
+                                    <td style="width: 18%;">{{ item.address }}</td>
+                                    <td style="width: 15%;">{{ item.regDate }}</td>
+                                    <td><div></div><button  class="application_btn approve-button" @click="approval_FM('승인', item.userno)">승인</button><button  class="application_btn wait-btn" @click="approval_FM('대기', item.userno)">대기</button></td>
+                                    </tr>
+                            </tbody>   
+                        </table>
+                        </div>
                     </div>
-                </div>
-              
-                
             </div>
         </div>
     </div>
@@ -161,6 +161,7 @@ export default  {
     },
     created(){
         this.get_Fleamarket();
+        this.get_application_FM();
     },
     
     data() {
@@ -186,12 +187,15 @@ export default  {
             //모달
             isModalOpen: false,
             //모달안에 승인/거절/대기용 데이터
-            application_FM:{
+            application_FM_data:{
                 fno: this.$route.query.fno,
                 state: '',
                 userno: '',
 
-            }
+            },
+            approval_appliication_FM:'',
+            reject_appliication_FM:'',
+            wait_appliication_FM:'',
         }
     },
     setup() {
@@ -248,24 +252,7 @@ export default  {
         getImagePath(filename) {
             return require('@/assets/img/fleamarket/' + filename);
         },
-        //신청하기
-        application_FM(){
-            if(this.FleaMarket.state=='모집종료'){
-                alert('해당 게시글은 모집마감 했습니다.');
-                return false;
-            }
-             axios.get('/ctg/application_FM', { params: { fno: this.$route.query.fno,userno:this.$store.state.member.userno } })
-                .then((res) => {
-                    console.log(res)
-                    if(res.data==1){
-                        alert("신청 완료되었습니다.")
-                    }else{
-                        alert("중복신청은 불가합니다.")
-                    }
-                    
-                })
-                .catch((err) => console.log(err))
-        },
+        
         // 모달 열기
          openModal() {
             this.isModalOpen = true; 
@@ -276,15 +263,57 @@ export default  {
             this.isModalOpen = false; 
            
         },
-        //승인/거절/대기로 돌리기
-        application_FM(state,userno){
-            console.log(state);
-            this.application_FM.state = state;
-            console.log(userno);
-            this.application_FM.userno = userno;
-             axios.post('/ctg/application_FM', application_FM)
+        //신청자 목록 가져오기(모달창에 데이터 할당)
+        get_application_FM(){
+            const data = {
+                fno: this.$route.query.fno
+            };
+             axios.post('/ctg/get_application_FM',data)
                 .then((res) => {
                     console.log(res)
+                    console.log('신청자 목록가져오기')
+                    this.approval_appliication_FM = res.data.approval_appliication_FM;
+                    this.reject_appliication_FM = res.data.reject_appliication_FM;
+                    this.wait_appliication_FM = res.data.wait_appliication_FM;
+                })
+                .catch((err) => console.log(err))
+        },
+        //수락/거절/대기 로 변경
+       approval_FM(state, userno) {
+             const data = {
+                fno: this.$route.query.fno,
+                state: state,
+                userno: userno
+            };
+            
+            axios.post('/ctg/upt_application_FM', data)
+                .then((res) => {
+                    //수정-> 승인갯수확인 업데이트하고 승인갯수 리턴받음
+                    console.log(res)
+                    this.FleaMarket.curCnt = res.data;
+                    this.get_application_FM()
+                    alert(state+'처리 되었습니다.')
+                })
+                .catch((err) => console.log(err))
+        },application_FM
+        () {
+            if (this.FleaMarket.state == '모집종료') {
+                alert('해당 게시글은 모집마감 했습니다.');
+                return false;
+            }
+            if (this.FleaMarket.curCnt == this.FleaMarket.approvalCnt) {
+                alert('모집인원을 다 채웠습니다. 다음에 다시 이용부탁드립니다.')
+                return false;
+            }
+            axios.get('/ctg/application_FM', { params: { fno: this.$route.query.fno, userno: this.$store.state.member.userno } })
+                .then((res) => {
+                    console.log(res)
+                    if (res.data == 1) {
+                        alert("신청 완료되었습니다.")
+                    } else {
+                        alert("중복신청은 불가합니다.")
+                    }
+
                 })
                 .catch((err) => console.log(err))
         }
@@ -442,6 +471,10 @@ export default  {
    width: 100%;
    margin:0px auto;
 }
+.modal_application_tableH {
+   width: 100%;
+   margin:0px auto;
+}
 .modal-content>div{
     height: 30%;
     border-bottom: 1px solid;
@@ -458,7 +491,7 @@ export default  {
     font-weight: bold;
 }
 
-.modal_application_table .application_table_th {
+.modal_application_table .application_table_th,.modal_application_tableH .application_table_th {
    height: 25px;
    background-color: rgb(77, 77, 77);
    color: white;
