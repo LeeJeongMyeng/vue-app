@@ -6,7 +6,9 @@ export default createStore({
     bool: false,
     member: "",
     currentPage: 1,
-    title:''
+    title: "",
+    F_currentPage: 1,
+    A_currentPage: 1,
   },
   //state값을 변경하는 로직
   mutations: {
@@ -26,6 +28,18 @@ export default createStore({
     },
     ResetCurrentPage(state) {
       state.currentPage = 1;
+    },
+    Plus_F_CurrentPage(state) {
+      state.F_currentPage++;
+    },
+    Minus_F_CurrentPage(state) {
+      state.F_currentPage--;
+    },
+    Plus_A_CurrentPage(state) {
+      state.A_currentPage++;
+    },
+    Minus_A_CurrentPage(state) {
+      state.A_currentPage--;
     },
   },
   actions: {
@@ -47,11 +61,30 @@ export default createStore({
     ResetCurrentPage: function (context) {
       return context.commit("ResetCurrentPage");
     },
+    Plus_F_CurrentPage: function (context) {
+      return context.commit("Plus_F_CurrentPage");
+    },
+    Minus_F_CurrentPage: function (context) {
+      return context.commit("Minus_F_CurrentPage");
+    },
+    Plus_A_CurrentPage: function (context) {
+      return context.commit("Plus_A_CurrentPage");
+    },
+    Minus_A_CurrentPage: function (context) {
+      return context.commit("Minus_A_CurrentPage");
+    },
   },
   plugins: [
     createPersistedState({
       //주목! : 여기에 쓴 모듈만 저장됩니다.
-      paths: ["bool", "member", "currentPage","title"],
+      paths: [
+        "bool",
+        "member",
+        "currentPage",
+        "title",
+        "F_currentPage",
+        "A_currentPage",
+      ],
     }),
   ],
 });

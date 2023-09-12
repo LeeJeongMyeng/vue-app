@@ -9,9 +9,7 @@
                 <li class="Header_Menu Home" @click="Go_to_Page('/')">홈</li>
                 <li class="Header_Menu reg_fleaMarket" @click="Check_User_BN">플리마켓등록</li>
                 <li class="Header_Menu Notic" @click="Go_to_Page('/ctg/Notic_Home')">공지사항</li>
-                <!-- 로그인아이디가 있으면 보여진다. -->
-                 <!-- v-if="!$store.state.account.member" -->
-                 <!-- v-if="$store.state.bool == false" -->
+                <li class="Header_Menu Notic" @click="Go_to_Page('/ctg/My_List')">내가쓴글</li>
                
                 <div class="rightNav Header_Menu" v-if="!$store.state.bool">
                      <li @click="Go_to_Page('/user/signIn')">로그인</li>
@@ -19,8 +17,6 @@
                 </div>
                 <div class="rightNav Header_Menu" v-else>
                     <li class="logout" @click="Logout_Ctg_Member">로그아웃</li>
-                    <li class="MyInfo">내정보</li>
-                        <!-- <li><router-link style="color: white;" to="/user/signIn" @click="Logout_Ctg_Member">로그아웃</router-link></li> -->
                 </div>
             </ul>
            <hr>
