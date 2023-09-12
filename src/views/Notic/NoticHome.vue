@@ -135,7 +135,8 @@ export default  {
         },
         //상세조회로 이동
         get_DetailNotic(ntno){
-           this.$router.push({ name: 'get_Notic', query: { ntno: ntno } });
+         
+            this.$router.push({ name: 'get_Notic', query: { ntno } });
         }
     }
 }

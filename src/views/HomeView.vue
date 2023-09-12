@@ -104,7 +104,9 @@ export default {
           }
           console.log(response.data)
 
-          this.FleaMarketList = response.data.FleamarketList;
+          setTimeout(() => {
+            this.FleaMarketList = response.data.FleamarketList;
+          }, 200);
           
 
           //this.FleaMarket.totpage = response.data.FleaMarketList.totPage

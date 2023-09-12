@@ -212,7 +212,15 @@ export default  {
             axios.get('/ctg/get_FleaMarket', {params:{fno:this.$route.query.fno }})
                 .then((res) => {
                     console.log(res)
-                    this.FleaMarket = res.data.FleaMarket
+                    var FleaMarket = res.data.FleaMarket;
+
+                    FleaMarket.detailAddress = this.processHTML(FleaMarket.detailAddress);
+                    FleaMarket.title = this.processHTML(FleaMarket.title);
+
+                    console.log('adasdasda',FleaMarket)
+
+                    this.FleaMarket = FleaMarket;
+                    
                     this.FleaMarket_files = res.data.FleaMarket_files
                     if(res.data.FleaMarket.state =='모집중'){
                         this.active_css.FM_state = 'font_blue';
@@ -295,8 +303,7 @@ export default  {
                     alert(state+'처리 되었습니다.')
                 })
                 .catch((err) => console.log(err))
-        },application_FM
-        () {
+        },application_FM() {
             if (this.FleaMarket.state == '모집종료') {
                 alert('해당 게시글은 모집마감 했습니다.');
                 return false;
@@ -316,7 +323,25 @@ export default  {
 
                 })
                 .catch((err) => console.log(err))
-        }
+        },
+         sanitizeInput(value) {
+            value = value.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+            value = value.replaceAll("\\(", "&#40;").replaceAll("\\)", "&#41;");
+            value = value.replaceAll("'", "&#39;");
+            value = value.replace(/eval\((.*)\)/g, "");
+            value = value.replace(/["'][\s]*javascript:(.*)["']/g, "\"\"");
+            value = value.replace(/script/g, "");
+            return value;
+        },
+        processHTML(html) {
+            const escapedHTML = html
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/\\\(/g, '&#40;')
+                .replace(/\\\)/g, '&#41;')
+                .replace(/'/g, '&#39;');
+            return escapedHTML;
+        },
     }
 }
 

@@ -7,7 +7,7 @@
             <table>
                 <tr>
                     <th><span></span> 성함 </th>
-                    <td> <input type="text" id="SignUp_name" placeholder="홍길동" v-model="User.name" :class="active_css.name" autocomplete=”off”> </td>
+                    <td> <input type="text" id="SignUp_name" placeholder="홍길동" v-model="User.name" :class="active_css.name" maxlength="5" autocomplete=”off”> </td>
                 </tr>
                 <tr>
                     <th>이메일</th>
@@ -447,6 +447,7 @@ export default {
                 return false;
             }
             // 여기까지 올경우 insert진행
+            User.detailAddress = this.sanitizeInput(User.detailAddress);
             axios.post('/ctg/Ins_Ctg_Member', this.User)
                 .then((res) => {
                     console.log(res)
@@ -456,7 +457,26 @@ export default {
 
                 })
                 .catch((err) => console.log(err))
-        }
+        },
+         sanitizeInput(value) {
+            value = value.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+            value = value.replaceAll("\\(", "&#40;").replaceAll("\\)", "&#41;");
+            value = value.replaceAll("'", "&#39;");
+            value = value.replace(/eval\((.*)\)/g, "");
+            value = value.replace(/["'][\s]*javascript:(.*)["']/g, "\"\"");
+            value = value.replace(/script/g, "");
+            return value;
+        },
+        processHTML(html) {
+            const escapedHTML = html
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/\\\(/g, '&#40;')
+                .replace(/\\\)/g, '&#41;')
+                .replace(/'/g, '&#39;');
+            return escapedHTML;
+        },
+
         
     }
 }

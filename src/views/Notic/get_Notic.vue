@@ -7,7 +7,8 @@
                     <th class="Notic_th">제목</th>  
                     <td class="Notic_td">{{ Notic.title}}</td>  
                     <th class="Notic_th">중요도</th>  
-                    <td class="Notic_td">중요글</td>  
+                    <td class="Notic_td" v-if="Notic.impWhether" style="color:red">중요글</td>
+                    <td class="Notic_td" v-else>일반글</td> 
                 </tr>
                 <tr> 
                     <th class="Notic_th">작성일</th>
@@ -18,16 +19,18 @@
                 </tr>
                 <tr>
                     <th class="Notic_th">첨부파일</th>
-                    <td colspan="3">
+                    <td colspan="3" class="Notic_td">
                         <div v-for="item in Notic_files" :key="item.fileno">
                            {{ item.origin_file_name }} 
                         </div>
                     </td>
-
                 </tr>
             </table >
         </div>
-        <ckeditor id="ckeditor" v-model="Notic.content" :config="editorConfig"></ckeditor>
+
+        <div id="ckeditor" style="height: 500px;" v-html="decodedContent(Notic.content)"></div>
+        <img src="../../assets/img/Notic/bnnnnnnnnnnnnnn.jpg">
+      
          </div>
     </div>
    
@@ -42,10 +45,13 @@ export default  {
     components:{
     },
     computed:{
-      
+     
     },
     created(){
-        this.get_Notic();
+       
+    },
+    filters: {
+       
     },
     
     data() {
@@ -69,20 +75,38 @@ export default  {
 
     },
     mounted(){
-      
+       this.get_Notic();
     },
     
     methods:{
         //페이지 랜더링시 데이터 호출
         get_Notic(){
+            console.log(this.$route.query.ntno)
             axios.get('/ctg/get_Notic', {params:{ntno:this.$route.query.ntno }})
                 .then((res) => {
                     console.log(res)
                     this.Notic = res.data.Notic;
                     this.Notic_files = res.data.Notic_files;
+                    this.decodedContent(res.data.Notic.content);
                 })
                 .catch((err) => console.log(err))
         },
+        decodedContent(value) {
+            console.log(value)
+            if (value) {
+                const replacedValue = value.replace("src=&#34;/pandora3/resources/pandora3/images/upload/ckediter/", ":src=&#34;require('@/assets/img/Notic/");
+                const replacedValue2 = replacedValue.replace("jpg","jpg')");
+                 console.log(replacedValue);
+                 const parser = new DOMParser();
+                 const decodedHtml = parser.parseFromString(replacedValue2, 'text/html').body.textContent;
+                return decodedHtml;
+                
+            }
+            return '';
+        },
+       
+        
+        
     }
 }
 

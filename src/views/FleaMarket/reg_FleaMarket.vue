@@ -425,6 +425,12 @@ export default  {
                 console.log('zz', this.common.FormData[i])
                 formData.append("files", this.common.FormData[i]);
             }
+            
+            //xss기본 치환
+            this.FleaMarket.title = this.sanitizeInput(this.FleaMarket.title);
+            this.FleaMarket.detailAddress = this.sanitizeInput(this.FleaMarket.detailAddress);
+
+
             //게시글 등록 정보 담기
             formData.append("FleamarketDto", JSON.stringify(this.FleaMarket));
             formData.append("method", 'insert');
@@ -443,7 +449,6 @@ export default  {
                     console.log(error)
                 })
         },
-        
         set_minDate(){
             let sDate = new Date();
             //날짜에서 하루더함
@@ -452,7 +457,25 @@ export default  {
             let minStr = sDate.toISOString().split('T')[0];
             //input date에 오늘부터 이전날짜는 지정할 수 없도록 설정
             $("#endDate").prop("min", minStr);
-        }
+        },
+         sanitizeInput(value) {
+            value = value.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+            value = value.replaceAll("\\(", "&#40;").replaceAll("\\)", "&#41;");
+            value = value.replaceAll("'", "&#39;");
+            value = value.replace(/eval\((.*)\)/g, "");
+            value = value.replace(/["'][\s]*javascript:(.*)["']/g, "\"\"");
+            value = value.replace(/script/g, "");
+            return value;
+        },
+         processHTML(html) {
+            const escapedHTML = html
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/\\\(/g, '&#40;')
+                .replace(/\\\)/g, '&#41;')
+                .replace(/'/g, '&#39;');
+            return escapedHTML;
+        },
         
        
     }

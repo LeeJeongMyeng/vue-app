@@ -6,9 +6,9 @@
         </div>
 
              <ul class="nav" id="header-nav1">
-                <li class="Header_Menu" @click="Go_to_Page('/')">홈</li>
-                <li class="Header_Menu" @click="Check_User_BN">플리마켓등록</li>
-                <li class="Header_Menu" @click="Go_to_Page('/ctg/Notic_Home')">공지사항</li>
+                <li class="Header_Menu Home" @click="Go_to_Page('/')">홈</li>
+                <li class="Header_Menu reg_fleaMarket" @click="Check_User_BN">플리마켓등록</li>
+                <li class="Header_Menu Notic" @click="Go_to_Page('/ctg/Notic_Home')">공지사항</li>
                 <!-- 로그인아이디가 있으면 보여진다. -->
                  <!-- v-if="!$store.state.account.member" -->
                  <!-- v-if="$store.state.bool == false" -->
@@ -18,8 +18,8 @@
                      <li @click="Go_to_Page('/user/signUp')">회원가입</li>
                 </div>
                 <div class="rightNav Header_Menu" v-else>
-                    <li @click="Logout_Ctg_Member">로그아웃</li>
-                    <li >내정보</li>
+                    <li class="logout" @click="Logout_Ctg_Member">로그아웃</li>
+                    <li class="MyInfo">내정보</li>
                         <!-- <li><router-link style="color: white;" to="/user/signIn" @click="Logout_Ctg_Member">로그아웃</router-link></li> -->
                 </div>
             </ul>
@@ -149,7 +149,23 @@ export default {
     }
    .Header_Menu:hover{
         cursor: pointer;
-        text-decoration: underline;
         
     }
+
+.rightNav .logout:hover {
+    text-decoration: underline;
+}
+
+.rightNav .MyInfo:hover {
+    text-decoration: underline;
+}
+.Home:hover {
+    text-decoration: underline;
+}
+.reg_fleaMarket:hover {
+    text-decoration: underline;
+}
+.Notic:hover {
+    text-decoration: underline;
+}
 </style>

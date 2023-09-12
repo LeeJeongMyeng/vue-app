@@ -25,7 +25,6 @@ import store from '@/store'
     setup() {
     const token_check = () => {
       axios.get("/ctg/account_check").then(({ data }) => {
-        console.log(data);
         //store.commit("setAccount", data || null);
       })
     };
