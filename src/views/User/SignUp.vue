@@ -17,7 +17,7 @@
                 <tr v-show="Common.Send_Email">
                     <th>인증코드</th>
                     <td> <input type="text" id="SignUp_email_code" maxlength="6" :class="active_css.email_Code" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Press Email auth_Code"></td>
-                    <td> <button @click="Check_Email_Code">인증확인</button></td>
+                    <td> <button @click="Check_Email_Code">인증확인</button> | <button @click="reset_Email">다시입력</button></td>
                 </tr>
                 <tr>
                     <th> 비밀번호 </th>
@@ -194,7 +194,6 @@ export default {
             emailjs.send('service_ee7pra4', 'template_azph6ba', templateParams)
                 .then((response) => {
                     this.Common.Send_Email=true;
-                    $('#SignUp_email_code').attr('required',true);
                     this.active_css.email = 'active_valid';
                     alert('입력하신 메일을 확인하시고, 인증번호를 입력부탁드립니다.');
                     $('#SignUp_email_code').focus();
@@ -224,6 +223,15 @@ export default {
             }
             
 
+        },
+        //이메일 및 인증코드 리셋
+        reset_Email(){
+            $('#SignUp_email').val('').attr('readonly', false);
+            $('#SignUp_email_code').val('').attr('readonly', false);
+            this.CheckInfo.email = false;
+            $('#SignUp_email').focus();
+            this.active_css.email_Code = 'active_invalid';
+            this.active_css.email = 'active_invalid';
         },
         // 비밀번호 양식확인
         Check_Pwd_Regular(){
@@ -361,6 +369,9 @@ export default {
         Check_Business_Number(){
             var data = { "b_no": [ this.User.bnNumber.replaceAll('-','')] };
 
+            //중복검사
+            //axios.post('/ctg/Check_BnNumber',data)
+
             axios.post("https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=qaJs1GHTyoLGcztYwOmuuQrV8qrgsos8R3r%2FpIQdyqX2HWAX%2Fy8tlU33sKXL0L0XkV%2FBAGqk8BT8KMVPoZn25g%3D%3D", data)
                 .then((result) => {
                     console.log(result.data.data[0].b_stt);
@@ -447,7 +458,7 @@ export default {
                 return false;
             }
             // 여기까지 올경우 insert진행
-            User.detailAddress = this.sanitizeInput(User.detailAddress);
+            this.User.detailAddress = this.sanitizeInput(this.User.detailAddress);
             axios.post('/ctg/Ins_Ctg_Member', this.User)
                 .then((res) => {
                     console.log(res)

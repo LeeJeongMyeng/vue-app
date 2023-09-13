@@ -303,11 +303,22 @@ export default  {
                     alert(state+'처리 되었습니다.')
                 })
                 .catch((err) => console.log(err))
-        },application_FM() {
+        },
+        //신청하기
+        application_FM() {
+            console.log(this.$store.state.member)
+            //로그인 안하고 신청시
+            if(!this.$store.state.member || this.$store.state.member==''){
+                alert('로그인 이후 이용 부탁드립니다.')
+                this.$router.push('/user/signIn')
+                return false;
+            }
+            //종료된 게시글일경우
             if (this.FleaMarket.state == '모집종료') {
                 alert('해당 게시글은 모집마감 했습니다.');
                 return false;
             }
+            //정원 다찼을 때
             if (this.FleaMarket.curCnt == this.FleaMarket.approvalCnt) {
                 alert('모집인원을 다 채웠습니다. 다음에 다시 이용부탁드립니다.')
                 return false;
@@ -324,6 +335,7 @@ export default  {
                 })
                 .catch((err) => console.log(err))
         },
+        //xss처리
          sanitizeInput(value) {
             value = value.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
             value = value.replaceAll("\\(", "&#40;").replaceAll("\\)", "&#41;");
@@ -333,6 +345,7 @@ export default  {
             value = value.replace(/script/g, "");
             return value;
         },
+        //xss처리된거 반환
         processHTML(html) {
             const escapedHTML = html
                 .replace(/&lt;/g, '<')

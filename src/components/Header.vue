@@ -6,19 +6,20 @@
         </div>
 
              <ul class="nav" id="header-nav1">
-                <li class="Header_Menu Home" @click="Go_to_Page('/')">홈</li>
-                <li class="Header_Menu reg_fleaMarket" @click="Check_User_BN">플리마켓등록</li>
-                <li class="Header_Menu Notic" @click="Go_to_Page('/ctg/Notic_Home')">공지사항</li>
-                <li class="Header_Menu Notic" @click="Go_to_Page('/ctg/My_List')">내가쓴글</li>
+                    <li class="Header_Menu Home" @click="Go_to_Page('/')">홈</li>
+                    <li class="Header_Menu reg_fleaMarket" @click="Check_User_BN">플리마켓등록</li>
+                    <li class="Header_Menu Notic" @click="Go_to_Page('/ctg/Notic_Home')">공지사항</li>
                
-                <div class="rightNav Header_Menu" v-if="!$store.state.bool">
-                     <li @click="Go_to_Page('/user/signIn')">로그인</li>
-                     <li @click="Go_to_Page('/user/signUp')">회원가입</li>
-                </div>
-                <div class="rightNav Header_Menu" v-else>
-                    <li class="logout" @click="Logout_Ctg_Member">로그아웃</li>
-                </div>
-            </ul>
+                    <div class="rightNav Header_Menu" v-if="!$store.state.bool">
+                         <li @click="Go_to_Page('/user/signIn')">로그인</li>
+                         <li @click="Go_to_Page('/user/signUp')">회원가입</li>
+                    </div>
+                    <div class="rightNav Header_Menu" v-else>
+                        <li class="logout" @click="Logout_Ctg_Member">로그아웃</li>
+                        <li class="Header_Menu Notic" @click="Go_to_Page('/ctg/My_List')">내정보</li>
+
+                    </div>
+                </ul>
            <hr>
   </header>
 </template>
@@ -74,6 +75,11 @@ export default {
         this.Go_to_Page('/user/signIn');
        },
        Check_User_BN(){
+        if (!this.$store.state.member || this.$store.state.member == '') {
+                alert('로그인 이후 이용 부탁드립니다.')
+                this.$router.push('/user/signIn')
+                return false;
+            }
             console.log(this.$store.state.member.bnCheck)
             if(!this.$store.state.member.bnCheck){
                 alert('사업자 회원만 등록 가능합니다.');

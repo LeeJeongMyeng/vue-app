@@ -30,11 +30,11 @@
     </div>
     <div>
         <button  @click="prevPage" class="page-btn">
-          이전
+          prev
         </button>
-        <span class="page-count">{{ this.$store.state.currentPage }} / {{ FleaMarketList.totPage }} 페이지</span>
+        <span class="page-count">{{ this.$store.state.currentPage }} / {{ FleaMarketList.totPage }}</span>
         <button  @click="nextPage" class="page-btn">
-          다음
+          next
         </button>
     </div>
   </div>

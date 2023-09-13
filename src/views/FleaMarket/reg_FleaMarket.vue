@@ -442,8 +442,11 @@ export default  {
             })
                 .then((response) => {
                     console.log(response)
-                    alert('등록 완료 되었습니다.')
-                    this.$router.push('/');
+                    setTimeout(() => {
+                         alert('등록 완료 되었습니다.')
+                        this.$router.push('/');
+                    },200)
+                   
                 })
                 .catch((error) => {
                     console.log(error)

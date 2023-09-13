@@ -21,7 +21,8 @@
                     <th class="Notic_th">첨부파일</th>
                     <td colspan="3" class="Notic_td">
                         <div v-for="item in Notic_files" :key="item.fileno">
-                           {{ item.origin_file_name }} 
+                            <a href="#" @click="filedownload(item.origin_file_name,item.chg_source_filename)">{{ item.origin_file_name }}</a>
+                           
                         </div>
                     </td>
                 </tr>
@@ -29,7 +30,6 @@
         </div>
 
         <div id="ckeditor" style="height: 500px;" v-html="decodedContent(Notic.content)"></div>
-        <img src="../../assets/img/Notic/bnnnnnnnnnnnnnn.jpg">
       
          </div>
     </div>
@@ -94,17 +94,53 @@ export default  {
         decodedContent(value) {
             console.log(value)
             if (value) {
-                const replacedValue = value.replace("src=&#34;/pandora3/resources/pandora3/images/upload/ckediter/", ":src=&#34;require('@/assets/img/Notic/");
-                const replacedValue2 = replacedValue.replace("jpg","jpg')");
+                const replacedValue = value.replace("src=&#34;/pandora3/resources/pandora3/images/upload/ckediter/", ":src=&#34;@/assets/img/Notic/");
+                //const replacedValue2 = replacedValue.replace("jpg","jpg')");
                  console.log(replacedValue);
                  const parser = new DOMParser();
-                 const decodedHtml = parser.parseFromString(replacedValue2, 'text/html').body.textContent;
+                 const decodedHtml = parser.parseFromString(replacedValue, 'text/html').body.textContent;
                 return decodedHtml;
                 
             }
             return '';
         },
-       
+        
+        filedownload(originFileName, chgSourceFilename) {
+            // 자바 서버로 파일 다운로드를 처리하기 위해 Axios를 사용하여 GET 요청을 보냅니다.
+            axios({
+                method: 'get',
+                url: '/ctg/filedownload', // 실제 엔드포인트 URL로 대체해주세요.
+                responseType: 'blob', // 이진 데이터를 처리하기 위해 응답 타입을 blob으로 설정합니다.
+                params: {
+                    filename: chgSourceFilename // 변경된 소스 파일 이름을 매개변수로 전달합니다.
+                }
+            })
+                .then(response => {
+                    console.log(response.data)
+                    //서버에서 path+file에 대해 ResponseEntity로 build값을 반환해서 url로 설정
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+
+                    // a태그 임시생성해서 href속성에 url지정
+                    const link = document.createElement('a');
+                    link.href = url;
+
+                    // <a url ='' download="파일이름.확장자"></a>형식이다.
+                    link.setAttribute('download', originFileName);
+                    
+                    //임시 생성한 a태그를 랜더링
+                    document.body.appendChild(link);
+                    //클릭해서 다운로드
+                    link.click();
+
+                    // 다운로드 이후 위에서 선언한 속성값(url,임시a태그 제거)
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(link);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+            }
+            
         
         
     }

@@ -35,11 +35,11 @@
                     <div class="pagination-container" v-if="My_FleaMarket.totPage >= 1">
                         <div>
                             <button  @click="prev_F_Page" class="page-btn">
-                            이전
+                            prev
                             </button>
-                            <span class="page-count">{{ this.$store.state.F_currentPage }} / {{ My_FleaMarket.totPage }} 페이지</span>
+                            <span class="page-count">{{ this.$store.state.F_currentPage }} / {{ My_FleaMarket.totPage }}</span>
                             <button  @click="next_F_Page" class="page-btn">
-                            다음
+                            next
                             </button>
                         </div>
                     </div>
@@ -79,11 +79,11 @@
                     <div class="pagination-container" v-if="My_Application.totPage >= 1">
                         <div>
                             <button  @click="prev_F_Page" class="page-btn">
-                            이전
+                            prev
                             </button>
-                            <span class="page-count">{{ this.$store.state.A_currentPage }} / {{ My_Application.totPage }} 페이지</span>
+                            <span class="page-count">{{ this.$store.state.A_currentPage }} / {{ My_Application.totPage }}</span>
                             <button  @click="next_F_Page" class="page-btn">
-                            다음
+                            next
                             </button>
                         </div>
                     </div>
