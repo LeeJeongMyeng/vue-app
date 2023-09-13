@@ -53,7 +53,7 @@
                 </tr>
                 <tr id="SignUp_bn_tr" v-show="Common.open_bnNumber">
                     <th> 사업자번호 </th>
-                    <td> <input type="text" id="SignUp_bn" v-model="User.bnNumber" :class="active_css.bnNumber" autocomplete=”off”> </td>
+                    <td> <input type="text" id="SignUp_bn" v-model="User.b_no" :class="active_css.bnNumber" autocomplete=”off”> </td>
                     <td> <button @click="Check_Business_Number">사업자번호확인</button></td>
                 </tr>
             </table>
@@ -96,7 +96,7 @@ export default {
                     , extraAddress : '' // 부가주소
                     , detailAddress : '' // 상세주소
                     , bnCheck : false //가입유형(사업자유무)
-                    , bnNumber : ''
+                    , b_no : ''
                     , userno : 'N'
                 },
 
@@ -353,12 +353,12 @@ export default {
                 this.User.bnCheck = false;
                 // 일반,사업자 radio선택 시, 사업자번호 확인하는칸 활성화 담당
                 this.Common.open_bnNumber = false;
-                this.User.bnNumber = '';
+                this.User.b_no = '';
                 $('#SignUp_bn').attr("required", false);
                 this.User.userno = 'N';
             } else {
                 this.CheckInfo.bnCheck = false;
-                this.User.bnNumber = '';
+                this.User.b_no = '';
                 this.Common.open_bnNumber = true;
                 this.User.userno = 'B';
                 $('#SignUp_bn').attr("required", true);
@@ -367,26 +367,45 @@ export default {
         },
         //사업자번호 확인 API
         Check_Business_Number(){
-            var data = { "b_no": [ this.User.bnNumber.replaceAll('-','')] };
-
-            //중복검사
-            //axios.post('/ctg/Check_BnNumber',data)
-
+            const b_no = this.User.b_no.replaceAll('-', '');
+            console.log(b_no)
+            var data = { "b_no":  [b_no] };
+            console.log(data.b_no);
             axios.post("https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=qaJs1GHTyoLGcztYwOmuuQrV8qrgsos8R3r%2FpIQdyqX2HWAX%2Fy8tlU33sKXL0L0XkV%2FBAGqk8BT8KMVPoZn25g%3D%3D", data)
                 .then((result) => {
                     console.log(result.data.data[0].b_stt);
                     const b_stt = result.data.data[0].b_stt;
                     if(b_stt == '계속사업자'){
-                        this.CheckInfo.bnCheck = true;
-                       // this.CheckInfo.bnNumber = true;
-                        this.User.bnCheck = true;
-                        alert('사업자등록 확인 되었습니다.')
-                        $('#SignUp_bn').attr('readonly',true);
+                       console.log('완료');
+                        this.BN_Check(b_no);
+                        
                     }else{
                         alert('없는 사업자 번호입니다. 다시한번 확인 부탁드립니다.')
                     }
                 })
                 .catch((err) => console.log(err))
+            
+        },
+        //중복 검사
+        BN_Check(b_no){
+            var data = { "b_no": b_no };
+            axios.post("/ctg/BN_Check", data)
+                .then((res) => {
+                    console.log(res);
+                if(res.data==0){
+                        this.CheckInfo.bnCheck = true;
+                        this.User.bnCheck = true;
+                        this.User.b_no = b_no;
+                        $('#SignUp_bn').attr('readonly', true);
+                        
+                        alert('사업자 번호 확인되었습니다.')
+                }else{
+                        $('#SignUp_bn').val('');
+                        $('#SignUp_bn').focus();
+                        alert('중복된 사업자 번호입니다. 다시 입력 부탁드립니다.');
+                }
+            })
+            .catch((err) => console.log(err))
         },
         //정규식검사 메서드
         Check_Regular_Expression(key, value) {
