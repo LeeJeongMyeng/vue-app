@@ -30,14 +30,13 @@
         if(data){
           store.commit("setAccount", data);
         }else{
-           alert('유효시간이 지나 로그아웃 되었습니다.');
+           alert('로그인 유효시간이 지나 자동 로그아웃 되었습니다.');
            store.commit("setAccount", null);
         }
         //위 if-else를 축약도 가능함
         // store.commit("setAccount", data || null);
       })
     };
-
 
     // route가 실행될떄마다 watch로 확인한다.
     const route = useRoute();
