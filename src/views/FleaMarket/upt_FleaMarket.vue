@@ -95,14 +95,14 @@ export default  {
          'date-picker':Datepicker
     },
     computed:{
-       member() {
-            return this.$store.state.member
+       user_id() {
+            return this.$store.state.user_id
         }
     },
     created(){
         
-            this.FleaMarket.user_id = this.member.user_id;
-            this.FleaMarket.email = this.member.email;
+            this.FleaMarket.user_id = thisuser_id;
+            //this.FleaMarket.email = this.member.email;
             //수정용 데이터 받아오기
             this.get_Fleamarket();
        
@@ -308,7 +308,7 @@ export default  {
         //게시글 정보 들고오기
         get_Fleamarket() {
             console.log(this.$route.query.post_id)
-            if (this.FleaMarket.user_id == this.$store.state.member.user_id) {
+            if (this.FleaMarket.user_id == this.$store.state.user_id) {
             axios.get('/ctg/get_FleaMarket', { params: { post_id: this.$route.query.post_id } })
                 .then((res) => {
                     console.log(res)

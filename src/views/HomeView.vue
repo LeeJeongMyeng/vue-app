@@ -54,8 +54,8 @@ export default {
     components: {
   },
   computed: {
-    member() {
-      return this.$store.state.member
+    user_id() {
+      return this.$store.state.user_id
     }
   },
   created() {

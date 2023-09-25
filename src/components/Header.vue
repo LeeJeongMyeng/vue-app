@@ -27,6 +27,7 @@
 <script>
 import axios from "axios";
 import store from '@/store';
+import Cookies from "js-cookie";
 export default {
     name: "Header",
     data() {
@@ -55,9 +56,10 @@ export default {
                 .then((res) => {
                     console.log(res)
                    
-                    this.$store.commit('setAccount','');
+                    this.$store.commit('setAccount',null);
                     this.$store.dispatch('ctl_Log_Btn', false);
-                    sessionStorage.removeItem("member");
+                    sessionStorage.removeItem("user_id");
+                    Cookies.remove('token'); // 쿠키 삭제
                     //여기에 페이지 이동 넣어야함
                     this.$emit('data',true);
                     
@@ -68,25 +70,16 @@ export default {
         }
        },
        Control_Log_Btn(){
-        const member = sessionStorage.getItem("member");
-        if(member==null){
+        const user_id = sessionStorage.getItem("user_id");
+        if(user_id ==null){
             this.bool = false;
         }
         this.Go_to_Page('/user/signIn');
        },
        Check_User_BN(){
-        console.log(this.$store.state.member)
-        if (!this.$store.state.member || this.$store.state.member == '') {
-                alert('로그인 이후 이용 부탁드립니다.')
-                this.$router.push('/user/signIn')
-                return false;
-            }
-            if(!this.$store.state.member._business){
-                alert('사업자 회원만 등록 가능합니다.');
-                return false;
-            }else{
-                this.Go_to_Page('/ctg/reg_FleaMarket')
-            }
+        console.log(this.$store.state.user_id)
+                  this.Go_to_Page('/ctg/reg_FleaMarket')
+        
        },
        Go_to_Page(pagename){
         console.log(pagename);

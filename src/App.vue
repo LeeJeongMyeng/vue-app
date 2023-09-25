@@ -22,31 +22,31 @@
     },
    
     
-    setup() {
-    const token_check = () => {
-      axios.get("/ctg/account_check").then(({ data }) => {
+  //   setup() {
+  //   const token_check = () => {
+  //     axios.get("/ctg/account_check").then(({ data }) => {
 
-        console.log(data)
-        if(data){
-          store.commit("setAccount", data);
-        }else{
-           alert('로그인 유효시간이 지나 자동 로그아웃 되었습니다.');
-           store.commit("setAccount", null);
-        }
-        //위 if-else를 축약도 가능함
-        // store.commit("setAccount", data || null);
-      })
-    };
+  //       console.log(data)
+  //       if(data){
+  //         store.commit("setAccount", data);
+  //       }else{
+           
+  //          store.commit("setAccount", null);
+  //       }
+  //       //위 if-else를 축약도 가능함
+  //       // store.commit("setAccount", data || null);
+  //     })
+  //   };
 
-    // route가 실행될떄마다 watch로 확인한다.
-    const route = useRoute();
-     watch(route, () => {
-      token_check();
-    })
-  },
+  //   // route가 실행될떄마다 watch로 확인한다.
+  //   const route = useRoute();
+  //    watch(route, () => {
+  //     token_check();
+  //   })
+  // },
     methods:{
       Check_Log_Btn(){
-        if (localStorage.getItem("member")) {
+        if (localStorage.getItem("user_id")) {
         this.bool = false;
       } else {
         this.bool = true

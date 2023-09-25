@@ -57,7 +57,7 @@ export default {
                     //const data = {'member':res.data,'bool':true}
                      this.$store.commit('setAccount',res.data);
                      this.$store.dispatch('ctl_Log_Btn',true);
-                    sessionStorage.setItem("member",JSON.stringify(res.data));
+                     //sessionStorage.setItem("user_id",JSON.stringify(res.data));
                    // this.$emit('data', false);
                     window.alert('로그인되었습니다.');
                     this.$router.push({ name: 'home' })

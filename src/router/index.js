@@ -21,6 +21,9 @@ const routes = [
     path: "/ctg/reg_FleaMarket",
     name: "reg_FleaMarket",
     component: () => import("../views/FleaMarket/reg_FleaMarket.vue"),
+    meta:{
+      requiresAuth:true
+    }
   },
   {
     path: "/ctg/get_FleaMarket",
@@ -55,3 +58,4 @@ const router = createRouter({
 })
 
 export default router
+

@@ -101,7 +101,7 @@ export default  {
     components:{
     },
     computed:{
-       member() {
+       user_id() {
             
         }
     },
@@ -130,10 +130,10 @@ export default  {
     methods:{
         //페이지 랜더링시 데이터 호출
         get_My_FleaMarket(){
-            console.log(this.$store.state.member.user_id)
+            console.log(this.$store.state.user_id)
             console.log(this.$store.state.F_currentPage)
             const data={
-                user_id : this.$store.state.member.user_id,
+                user_id : this.$store.state.user_id,
                 currentPage: this.$store.state.F_currentPage
             }
             axios.post('/ctg/get_My_FleaMarket',data)
@@ -163,10 +163,10 @@ export default  {
             }
         },
         get_My_Application() {
-            console.log(this.$store.state.member.user_id)
+            console.log(this.$store.state.user_id)
             console.log(this.$store.state.A_currentPage)
             const data = {
-                user_id: this.$store.state.member.user_id,
+                user_id: this.$store.state.user_id,
                 currentPage: this.$store.state.A_currentPage
             }
             axios.post('/ctg/get_My_Application', data)

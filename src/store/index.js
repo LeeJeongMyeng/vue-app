@@ -4,7 +4,7 @@ import axios from "axios";
 export default createStore({
   state: {
     bool: false,
-    member: "",
+    user_id: "",
     currentPage: 1,
     title: "",
     F_currentPage: 1,
@@ -14,7 +14,7 @@ export default createStore({
   mutations: {
     setAccount(state, payload) {
       console.log("mutations:", payload);
-      state.member = payload;
+      state.user_id = payload;
       // state.bool = payload.bool;
     },
     ctl_Log_Btn(state, payload) {
@@ -79,7 +79,7 @@ export default createStore({
       //주목! : 여기에 쓴 모듈만 저장됩니다.
       paths: [
         "bool",
-        "member",
+        "user_id",
         "currentPage",
         "title",
         "F_currentPage",

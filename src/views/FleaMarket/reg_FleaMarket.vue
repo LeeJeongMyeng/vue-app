@@ -80,13 +80,13 @@ export default  {
          'date-picker':Datepicker
     },
     computed:{
-       member() {
-            return this.$store.state.member
+       user_id() {
+            return this.$store.state.user_id
         }
     },
     created(){
-        this.FleaMarket.user_id = this.member.user_id;
-        this.FleaMarket.email = this.member.email;
+        this.FleaMarket.user_id = this.user_id;
+        //this.FleaMarket.email = this.member.email;
         
         
     },
@@ -283,6 +283,7 @@ export default  {
     },
     
     methods:{
+       
         //주소
         //주소API
         sample6_execDaumPostcode() {
