@@ -42,36 +42,36 @@ axios.interceptors.response.use(
         return response;
     },
     function(error){
-        console.log('axios.interceptors.response : ',error);
+        console.log('axios.interceptors.response : ',error.response.data.message);
       
         if(error.response && error.response.status){
-              switch (error.response.status) {
-                case 400:
-                  alert("400에러");
-                  break;
-                case 401:
-                  alert("401에러 : 로그아웃 됩니다.");
-                  break;
-                case 403:
-                  alert("사업자회원만 사용 가능합니다.");
-                  break;
-                case 404:
-                  alert('404dpfj')
-                  break;
-                case 405:
-                  alert("405 에러");
-                  break;
-                case 406:
-                  alert(" 406에러 잠시 후 다시 시도해주세요.");
-                  break;
-                case 500:
-                  alert("500에러 업로드 실패.");
-                  break;
-                case 503:
-                  // ...
-                  break;
-              }
-
+              // switch (error.response.status) {
+              //   case 400:
+              //     alert("400에러");
+              //     break;
+              //   case 401:
+              //     alert("401에러");
+              //     break;
+              //   case 403:
+              //     alert("사업자회원만 사용 가능합니다.");
+              //     break;
+              //   case 404:
+              //     alert('404dpfj')
+              //     break;
+              //   case 405:
+              //     alert("405 에러");
+              //     break;
+              //   case 406:
+              //     alert(" 406에러 잠시 후 다시 시도해주세요.");
+              //     break;
+              //   case 500:
+              //     alert("500에러 업로드 실패.");
+              //     break;
+              //   case 503:
+              //     // ...
+              //     break;
+              // }
+          alert(error.response.data.message);
         }
         return Promise.reject(new Error("Interceptor handled the error"));
     }
@@ -82,18 +82,14 @@ router.beforeEach(function (to, from, next) {
   // to : 이동할 url
   // from : 현재 url
   // next : to에서 지정한 url로 이동하기 위해 꼭 호출해야 하는 함수
-  axios.get("/ctg/account_check").then(({ data }) => {
-        console.log('axios.router.beforeEach : ',data)
-        console.log(
-          "axios,router.beforeEach boolean: ",
-          (data != null || data != "")
-        );
-        if(data!=null || data != ''){
-          store.commit("setAccount", data);
-
-        }else{
-          this.$store.commit("setAccount", null);
-          this.$store.dispatch("ctl_Log_Btn", false);
+  axios.get("/ctg/account_check")
+    .then((res) => {
+        console.log('axios.router.beforeEach : ',res.data)
+        if (res.data !== null && res.data !== "") {
+          store.commit("setAccount", res.data);
+        } else {
+          store.commit("setAccount", null);
+          store.dispatch("ctl_Log_Btn", false);
           sessionStorage.removeItem("user_id");
           Cookies.remove("token"); // 쿠키 삭제
         }
@@ -112,7 +108,7 @@ router.beforeEach(function (to, from, next) {
           }
         })
         .catch((error) => {
-          console.error(error); // 에러 출력
+          console.log(error); // 에러 출력
           next(from); // 이전 컴포넌트로 이동
         });
     } else {
