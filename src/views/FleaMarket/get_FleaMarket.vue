@@ -3,17 +3,17 @@
   <div class="container">
     <div class="InfoBox">
         <h1 class="Info_title">&#91;{{ FleaMarket.title}}&#93;<span :class="active_css.FM_state">&#40;{{ FleaMarket.state }}&#41;</span></h1><br><br>
-        <div id="Info_address"><span id="Info_address_sp">👉&#91;행사 진행장소&#93; </span>{{ FleaMarket.address }} {{ FleaMarket.detailAddress }}</div><br>
-        <div id="Info_endDate"><span id="Info_endDate_sp">👉&#91;신청 마감일자&#93; </span>{{ FleaMarket.endDate }}</div><br>
-        <div id="Info_endDate"><span id="Info_endDate_sp">👉&#91;모집인원 수&#93; </span>{{ FleaMarket.approvalCnt }}명</div><br>
-        <div id="Info_endDate"><span id="Info_endDate_sp">👉&#91;현재 참가승인인원&#93; </span>{{ FleaMarket.curCnt }}명</div><br>
+        <div id="Info_address"><span id="Info_address_sp">👉&#91;행사 진행장소&#93; </span>{{ FleaMarket.location }} {{ FleaMarket.sub_location }}</div><br>
+        <div id="Info_endDate"><span id="Info_endDate_sp">👉&#91;신청 마감일자&#93; </span>{{ FleaMarket.end_date }}</div><br>
+        <div id="Info_endDate"><span id="Info_endDate_sp">👉&#91;모집인원 수&#93; </span>{{ FleaMarket.max_applicants }}명</div><br>
+        <div id="Info_endDate"><span id="Info_endDate_sp">👉&#91;현재 참가승인인원&#93; </span>{{ FleaMarket.current_count }}명</div><br>
 
     </div>
     <div id="Info_Img_Box">
                             <h1 style="text-align: center; font-size: 28px; font-weight: bold; padding: 52px 0 0 0;">현재 첨부된 행사 이미지</h1>
                             <hr style="width: 80%;">
                             <div class="image-container">
-                            <div class="image-item" v-for="item in FleaMarket_files" :key="item.fno">
+                            <div class="image-item" v-for="item in FleaMarket_files" :key="item.post_id">
                             <img id="cardImg" :src="getImagePath(item.uuid_file_name)" alt="">
                             </div>
                             </div>
@@ -24,7 +24,7 @@
     
     <ckeditor id="ckeditor" v-model="FleaMarket.content" :config="editorConfig"></ckeditor>
     
-    <div id="get_controlbox" v-if="FleaMarket.userno == this.$store.state.member.userno">
+    <div id="get_controlbox" v-if="FleaMarket.user_id == this.$store.state.member.user_id">
         <button type="button" class="getFMbtn" @click="openModal"> 신청자 확인 </button>
         <button type="button" class="getFMbtn" @click="Go_to_uptPage" > 수정 </button>
         <button type="button" class="getFMbtn" id="delFMbtn" @click="Del_FleaMarket"> 삭제 </button>
@@ -65,14 +65,14 @@
                     <div class="application_tbody">
                     <table class="modal_application_table">
                     <tbody>
-                            <tr v-for="item in wait_appliication_FM" :key="item.userno">
-                                <td style="width: 11%;">{{ item.userno }}</td>
+                            <tr v-for="item in wait_appliication_FM" :key="item.user_id">
+                                <td style="width: 11%;">{{ item.user_id }}</td>
                                 <td style="width: 11%;">{{ item.name }}</td>
                                 <td style="width: 16%;">{{ item.email }}</td>
-                                <td style="width: 16%;">{{ item.phoneNumber }}</td>
+                                <td style="width: 16%;">{{ item.phone_number }}</td>
                                 <td style="width: 18%;">{{ item.address }}</td>
-                                <td style="width: 15%;">{{ item.regDate }}</td>
-                                <td style="width: 13%;"><div></div><button  class="application_btn approve-button" @click="approval_FM('승인', item.userno)">승인</button><button class="application_btn reject-button"  @click="approval_FM('거절', item.userno)">거절</button></td>
+                                <td style="width: 15%;">{{ item.reg_date }}</td>
+                                <td style="width: 13%;"><div></div><button  class="application_btn approve-button" @click="approval_FM('승인', item.user_id)">승인</button><button class="application_btn reject-button"  @click="approval_FM('거절', item.user_id)">거절</button></td>
                             </tr>
                         </tbody>   
                     </table>
@@ -96,14 +96,14 @@
                     <div class="application_tbody">
                     <table class="modal_application_table">
                     <tbody>
-                            <tr v-for="item in approval_appliication_FM" :key="item.userno">
-                                <td style="width: 11%;">{{ item.userno }}</td>
+                            <tr v-for="item in approval_appliication_FM" :key="item.user_id">
+                                <td style="width: 11%;">{{ item.user_id }}</td>
                                 <td style="width: 11%;">{{ item.name }}</td>
                                 <td style="width: 16%;">{{ item.email }}</td>
-                                <td style="width: 16%;">{{ item.phoneNumber }}</td>
+                                <td style="width: 16%;">{{ item.phone_number }}</td>
                                 <td style="width: 18%;">{{ item.address }}</td>
-                                <td style="width: 15%;">{{ item.regDate }}</td>
-                                <td><div></div><button class="application_btn reject-button" @click="approval_FM('거절', item.userno)">거절</button><button class="application_btn wait-btn" @click="approval_FM('대기', item.userno)">대기</button></td>
+                                <td style="width: 15%;">{{ item.reg_date }}</td>
+                                <td><div></div><button class="application_btn reject-button" @click="approval_FM('거절', item.user_id)">거절</button><button class="application_btn wait-btn" @click="approval_FM('대기', item.user_id)">대기</button></td>
                             </tr>
                         </tbody>   
                     </table>
@@ -127,14 +127,14 @@
                         <div class="application_tbody">
                         <table class="modal_application_table">
                         <tbody>
-                                <tr v-for="item in reject_appliication_FM" :key="item.userno">
-                                    <td style="width: 11%;">{{ item.userno }}</td>
+                                <tr v-for="item in reject_appliication_FM" :key="item.user_id">
+                                    <td style="width: 11%;">{{ item.user_id }}</td>
                                     <td style="width: 11%;">{{ item.name }}</td>
                                     <td style="width: 16%;">{{ item.email }}</td>
-                                    <td style="width: 16%;">{{ item.phoneNumber }}</td>
+                                    <td style="width: 16%;">{{ item.phone_number }}</td>
                                     <td style="width: 18%;">{{ item.address }}</td>
-                                    <td style="width: 15%;">{{ item.regDate }}</td>
-                                    <td><div></div><button  class="application_btn approve-button" @click="approval_FM('승인', item.userno)">승인</button><button  class="application_btn wait-btn" @click="approval_FM('대기', item.userno)">대기</button></td>
+                                    <td style="width: 15%;">{{ item.reg_date }}</td>
+                                    <td><div></div><button  class="application_btn approve-button" @click="approval_FM('승인', item.user_id)">승인</button><button  class="application_btn wait-btn" @click="approval_FM('대기', item.user_id)">대기</button></td>
                                     </tr>
                             </tbody>   
                         </table>
@@ -167,7 +167,7 @@ export default  {
     data() {
         return {
             common:{
-                fno:this.$route.query.fno
+                post_id:this.$route.query.post_id
             },
             //CKEditer
             editorConfig: {
@@ -188,9 +188,9 @@ export default  {
             isModalOpen: false,
             //모달안에 승인/거절/대기용 데이터
             application_FM_data:{
-                fno: this.$route.query.fno,
+                post_id: this.$route.query.post_id,
                 state: '',
-                userno: '',
+                user_id: '',
 
             },
             approval_appliication_FM:'',
@@ -208,13 +208,13 @@ export default  {
     methods:{
         //페이지 랜더링시 데이터 호출
         get_Fleamarket(){
-            console.log(this.$route.query.fno)
-            axios.get('/ctg/get_FleaMarket', {params:{fno:this.$route.query.fno }})
+            console.log(this.$route.query.post_id)
+            axios.get('/ctg/get_FleaMarket', {params:{post_id:this.$route.query.post_id }})
                 .then((res) => {
                     console.log(res)
                     var FleaMarket = res.data.FleaMarket;
 
-                    FleaMarket.detailAddress = this.processHTML(FleaMarket.detailAddress);
+                    FleaMarket.sub_location = this.processHTML(FleaMarket.sub_location);
                     FleaMarket.title = this.processHTML(FleaMarket.title);
 
                     console.log('adasdasda',FleaMarket)
@@ -231,16 +231,16 @@ export default  {
                 .catch((err) => console.log(err))
         },
         //수정페이지로 이동
-        Go_to_uptPage(pagename) {
+        Go_to_uptPage() {
            // console.log(pagename);
-            this.$router.push({ name:'upt_FleaMarket', query: { fno: this.FleaMarket.fno } });
+            this.$router.push({ name:'upt_FleaMarket', query: { post_id: this.FleaMarket.post_id } });
             //this.$router.push(pagename)
         },
         //게시글 삭제
         Del_FleaMarket(){
             if(confirm('해당 게시글을 삭제 삭제하시겠습니까?')){
-                if(this.FleaMarket.userno == this.$store.state.member.userno){
-                axios.get('/ctg/del_FleaMarket', { params: { fno: this.FleaMarket.fno } })
+                if(this.FleaMarket.user_id == this.$store.state.member.user_id){
+                axios.get('/ctg/del_FleaMarket', { params: {post_id: this.FleaMarket.post_id } })
                     .then((res) => {
                         console.log(res)
                         alert("삭제가 완료되었습니다.");
@@ -274,7 +274,7 @@ export default  {
         //신청자 목록 가져오기(모달창에 데이터 할당)
         get_application_FM(){
             const data = {
-                fno: this.$route.query.fno
+                post_id: this.$route.query.post_id
             };
              axios.post('/ctg/get_application_FM',data)
                 .then((res) => {
@@ -287,18 +287,18 @@ export default  {
                 .catch((err) => console.log(err))
         },
         //수락/거절/대기 로 변경
-       approval_FM(state, userno) {
+       approval_FM(state, user_id) {
              const data = {
-                fno: this.$route.query.fno,
+                post_id: this.$route.query.post_id,
                 state: state,
-                userno: userno
+                user_id: user_id
             };
             
             axios.post('/ctg/upt_application_FM', data)
                 .then((res) => {
                     //수정-> 승인갯수확인 업데이트하고 승인갯수 리턴받음
                     console.log(res)
-                    this.FleaMarket.curCnt = res.data;
+                    this.FleaMarket.current_count = res.data;
                     this.get_application_FM()
                     alert(state+'처리 되었습니다.')
                 })
@@ -319,11 +319,11 @@ export default  {
                 return false;
             }
             //정원 다찼을 때
-            if (this.FleaMarket.curCnt == this.FleaMarket.approvalCnt) {
+            if (this.FleaMarket.current_count == this.FleaMarket.max_applicants) {
                 alert('모집인원을 다 채웠습니다. 다음에 다시 이용부탁드립니다.')
                 return false;
             }
-            axios.get('/ctg/application_FM', { params: { fno: this.$route.query.fno, userno: this.$store.state.member.userno } })
+            axios.get('/ctg/application_FM', { params: { post_id: this.$route.query.post_id, user_id: this.$store.state.member.user_id } })
                 .then((res) => {
                     console.log(res)
                     if (res.data == 1) {

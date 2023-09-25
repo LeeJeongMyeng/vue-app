@@ -21,17 +21,17 @@
                     <div class="application_tbody" v-if="My_FleaMarket.totPage>=1">
                     <table class="modal_application_table">
                     <tbody>
-                            <tr v-for="item in My_FleaMarket.fleamarketDtoList" :key="item.fno" >
-                                <td style="width: 7%;">{{ item.fno }}</td> 
-                                <td style="width: 51%;">{{ item.title }}</td>
-                                <td style="width: 18%;">{{ item.address }}</td>
-                                <td style="width: 10%;">{{ item.curCnt }}/{{ item.approvalCnt }}</td>
-                                <td style="width: 10%;"><button class="application_btn reject-button"  @click="get_Detail_FM(item.fno)">이동</button></td>
+                            <tr v-for="item in My_FleaMarket.fleamarketDtoList" :key="item.post_id" >
+                                <td style="width: 7%;">{{ item.rownum }}</td> 
+                                <td style="width: 51%; text-align: left; padding:5px;">{{ item.title }}</td>
+                                <td style="width: 18%;">{{ item.location }}</td>
+                                <td style="width: 10%;">{{ item.current_count }}/{{ item.max_applicants }}</td>
+                                <td style="width: 10%;"><button class="application_btn reject-button"  @click="get_Detail_FM(item.post_id)">이동</button></td>
                             </tr>
                         </tbody>   
                     </table>
                     </div>
-                    <div class="application_nobody" v-else>?</div>
+                    <div class="application_nobody" v-else>검색 결과가 없습니다.</div>
                     <div class="pagination-container" v-if="My_FleaMarket.totPage >= 1">
                         <div>
                             <button  @click="prev_F_Page" class="page-btn">
@@ -63,14 +63,14 @@
                     <div class="application_tbody" v-if="My_Application.totPage>=1">
                     <table class="modal_application_table">
                     <tbody>
-                            <tr v-for="item in My_Application.fleamarketDtoList" :key="item.fno">
-                                <td style="width: 5%;">{{ item.fno }}</td>
-                                <td style="width: 40%;">{{ item.title }}</td>
-                                <td style="width: 20%;">{{ item.address }}</td>
+                            <tr v-for="item in My_Application.fleamarketDtoList" :key="item.post_id">
+                                <td style="width: 5%;">{{ item.rownum }}</td>
+                                <td style="width: 40%; text-align: left; padding:5px;">{{ item.title }}</td>
+                                <td style="width: 20%;">{{ item.location }}</td>
                                 <td style="width: 10%;">{{ item.state }}</td>
                                 <td style="width: 10%;">{{ item.fstate }}</td>
-                                <td style="width: 8%;">{{ item.curCnt }}/{{ item.approvalCnt }}</td>
-                                <td style="width: 7%;"><button class="application_btn reject-button"  @click="get_Detail_FM(item.fno)">거절</button></td>
+                                <td style="width: 8%;">{{ item.current_count }}/{{ item.max_applicants }}</td>
+                                <td style="width: 7%;"><button class="application_btn reject-button"  @click="get_Detail_FM(item.post_id)">이동</button></td>
                             </tr>
                         </tbody>   
                     </table>
@@ -130,10 +130,10 @@ export default  {
     methods:{
         //페이지 랜더링시 데이터 호출
         get_My_FleaMarket(){
-            console.log(this.$store.state.member.userno)
+            console.log(this.$store.state.member.user_id)
             console.log(this.$store.state.F_currentPage)
             const data={
-                userno : this.$store.state.member.userno,
+                user_id : this.$store.state.member.user_id,
                 currentPage: this.$store.state.F_currentPage
             }
             axios.post('/ctg/get_My_FleaMarket',data)
@@ -163,10 +163,10 @@ export default  {
             }
         },
         get_My_Application() {
-            console.log(this.$store.state.member.userno)
+            console.log(this.$store.state.member.user_id)
             console.log(this.$store.state.A_currentPage)
             const data = {
-                userno: this.$store.state.member.userno,
+                user_id: this.$store.state.member.user_id,
                 currentPage: this.$store.state.A_currentPage
             }
             axios.post('/ctg/get_My_Application', data)
@@ -194,10 +194,10 @@ export default  {
                 this.get_My_Application();
             }
         },
-        get_Detail_FM(fno) {
-            console.log(fno);
-            //this.body.fno
-            this.$router.push({ name: 'get_FleaMarket', query: { fno: fno } }); //추가한 상세페이지 라우터
+        get_Detail_FM(post_id) {
+            console.log(post_id);
+            //this.body.post_id
+            this.$router.push({ name: 'get_FleaMarket', query: { post_id: post_id } }); //추가한 상세페이지 라우터
         }
     }
 }

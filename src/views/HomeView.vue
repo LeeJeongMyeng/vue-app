@@ -6,7 +6,7 @@
 
          <div class="cardBox" v-else v-for="item in FleaMarketList.fleamarketDtoList" :key="item">
           <!-- <div style="width: 100%; height: 100%; cursor: pointer;" @click="get_Detail_FM('{{item.fno}}')"> -->
-            <div class="card" @click="get_Detail_FM(item.fno)" style="width: 100%; height: 100%; cursor: pointer;">
+            <div class="card" @click="get_Detail_FM(item.post_id)" style="width: 100%; height: 100%; cursor: pointer;">
                 <!-- <img src="C:\Users\TA9\git\vue-app\src\assets\img\fleamarket\c0b45714-d7af-40e8-8327-68bcdf3332c6_다운로드 (3).jpg" alt=""> -->
                 <div class="Imgbox">
                   <!-- <img id="cardImg" src='../assets/img/fleamarket/7410a5ff-fdfd-4202-ad90-479df5fe9043_플마3.jpg' alt=""> -->
@@ -14,10 +14,10 @@
                 </div>
               <div class="Infobox">
               <h1 class="card_title">{{ item.title }}</h1>
-              <h2 class="card_address">위&nbsp;&nbsp;&nbsp;치 👉 {{ item.address }}</h2>
-              <h2 class="card_regDate">작&nbsp;성&nbsp;일 👉 {{ item.regDate }}</h2>
-              <h2 class="card_regDate">모집종료일 👉 {{ item.endDate }}</h2>
-              <h2 class="card_Cnt">(현재/모집) {{ item.curCnt }}/{{ item.approvalCnt }} [{{ item.state }}]</h2>
+              <h2 class="card_address">위&nbsp;&nbsp;&nbsp;치 👉 {{ item.location }}</h2>
+              <h2 class="card_regDate">작&nbsp;성&nbsp;일 👉 {{ item.reg_date }}</h2>
+              <h2 class="card_regDate">모집종료일 👉 {{ item.end_date }}</h2>
+              <h2 class="card_Cnt">(현재/모집) {{ item.current_count }}/{{ item.max_applicants }} [{{ item.state }}]</h2>
               </div>
           </div>
          </div>
@@ -98,15 +98,15 @@ export default {
         
         axios.post('/ctg/get_FleaMarket_List',this.Fleamarket)
         .then((response) => {
-          console.log("totpage",response.data.FleamarketList.totPage)
-          if(response.data.FleamarketList.totPage==0){
+          console.log(response)
+          if(response.data.totPage==0){
             this.$store.state.currentPage=0;
           }
           console.log(response.data)
 
           setTimeout(() => {
-            this.FleaMarketList = response.data.FleamarketList;
-          }, 200);
+            this.FleaMarketList = response.data;
+          }, 500);
           
 
           //this.FleaMarket.totpage = response.data.FleaMarketList.totPage
@@ -136,10 +136,10 @@ export default {
         this.get_FleaMarket_List();
       }
     },
-    get_Detail_FM(fno){
-      console.log(fno);
+    get_Detail_FM(post_id){
+      console.log(post_id);
       //this.body.fno
-      this.$router.push({ name: 'get_FleaMarket', query:{fno:fno} }); //추가한 상세페이지 라우터
+      this.$router.push({ name: 'get_FleaMarket', query:{post_id:post_id} }); //추가한 상세페이지 라우터
     }
 
 

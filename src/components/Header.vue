@@ -75,13 +75,13 @@ export default {
         this.Go_to_Page('/user/signIn');
        },
        Check_User_BN(){
+        console.log(this.$store.state.member)
         if (!this.$store.state.member || this.$store.state.member == '') {
                 alert('로그인 이후 이용 부탁드립니다.')
                 this.$router.push('/user/signIn')
                 return false;
             }
-            console.log(this.$store.state.member.bnCheck)
-            if(!this.$store.state.member.bnCheck){
+            if(!this.$store.state.member._business){
                 alert('사업자 회원만 등록 가능합니다.');
                 return false;
             }else{

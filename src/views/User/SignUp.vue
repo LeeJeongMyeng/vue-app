@@ -30,7 +30,7 @@
                 
                 <tr>
                     <th> 핸드폰번호  </th>
-                    <td> <input type="text" id="SignUp_phonenumber" v-model="User.phoneNumber" :class="active_css.phoneNumber" @keyup="Check_PN_Regular" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" minlength="10" maxlength="11" > </td>
+                    <td> <input type="text" id="SignUp_phonenumber" v-model="User.phone_number" :class="active_css.phoneNumber" @keyup="Check_PN_Regular" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" minlength="10" maxlength="11" > </td>
                 </tr>
                 <tr class="addressbox">
                     <th> 주소 </th>
@@ -47,13 +47,13 @@
                 <tr >
                     <th> 가입유형  </th>
                     <td>
-                        <input type="radio" name ="bnCheck" id="bnCkeckT" value="0"  @change="bnCheck($event)" checked>일반회원
-                       <input type="radio" name ="bnCheck" id="bnCkeckF" value="1"  @change="bnCheck($event)">사업자회원
+                        <input type="radio" name ="is_business" id="bnCkeckT" value="0"  @change="is_business($event)" checked>일반회원
+                       <input type="radio" name ="is_business" id="bnCkeckF" value="1"  @change="is_business($event)">사업자회원
                     </td>
                 </tr>
                 <tr id="SignUp_bn_tr" v-show="Common.open_bnNumber">
                     <th> 사업자번호 </th>
-                    <td> <input type="text" id="SignUp_bn" v-model="User.b_no" :class="active_css.bnNumber" autocomplete=”off”> </td>
+                    <td> <input type="text" id="SignUp_bn" v-model="User.business_number" :class="active_css.bnNumber" autocomplete=”off”> </td>
                     <td> <button @click="Check_Business_Number">사업자번호확인</button></td>
                 </tr>
             </table>
@@ -90,13 +90,13 @@ export default {
                     , password: '' //패스워드
                     , password2: '' //패스워드확인
                     , name: '' //이름
-                    , phoneNumber : '' //핸드폰번호
-                    , postcode : '' //우편번호
+                    , phone_number : '' //핸드폰번호
+                    , postal_code : '' //우편번호
                     , address : '' //주소
-                    , extraAddress : '' // 부가주소
-                    , detailAddress : '' // 상세주소
-                    , bnCheck : false //가입유형(사업자유무)
-                    , b_no : ''
+                    , extra_address : '' // 부가주소
+                    , detail_address : '' // 상세주소
+                    , is_business : false //가입유형(사업자유무)
+                    , business_number : ''
                     , userno : 'N'
                 },
 
@@ -117,9 +117,9 @@ export default {
                   email: false //이메일
                 , password: false  //패스워드
                 , password2: false  //패스워드2
-                , phoneNumber: false  //핸드폰번호
+                , phone_number: false  //핸드폰번호
                 , address: false  //주소
-                , bnCheck: true  //가입유형(사업자유무)
+                , is_business: true  //가입유형(사업자유무)
                 //, bnNumber: false
             }
             
@@ -265,15 +265,15 @@ export default {
         },
         //핸드폰번호
         Check_PN_Regular(){
-            const PhoneNumber = this.User.phoneNumber;
-            const Check = this.Check_Regular_Expression('PhoneNumber', PhoneNumber);
+            const phone_number = this.User.phone_number;
+            const Check = this.Check_Regular_Expression('PhoneNumber', phone_number);
 
             if(Check){
                 this.active_css.phoneNumber = 'active_valid';
-                this.CheckInfo.phoneNumber = true
+                this.CheckInfo.phone_number = true
             }else{
                 this.active_css.phoneNumber = 'active_invalid';
-                 this.CheckInfo.phoneNumber = false
+                 this.CheckInfo.phone_number = false
             }
         },
         //주소API
@@ -336,48 +336,48 @@ export default {
         //주소API 실행 이후, VUE DATA에 할당
         Success_Address(){
             this.CheckInfo.address = true;
-            this.User.postcode = $('#sample6_postcode').val();
+            this.User.postal_code = $('#sample6_postcode').val();
             this.User.address = $('#sample6_address').val();
-            this.User.extraAddress = $('#sample6_extraAddress').val();
-            this.User.detailAddress = $('#sample6_detailAddress').val();
+            this.User.extra_address = $('#sample6_extraAddress').val();
+            this.User.detail_address = $('#sample6_detailAddress').val();
         },
 
 
 
         //가입유형 선택 처리(css 및 date할당)
-        bnCheck(event) {
+        is_business(event) {
             if (event.target.value == 0) {
                 //회원가입시 확인할 사업자부분 check
-                this.CheckInfo.bnCheck = true;
+                this.CheckInfo.is_business = true;
                 // 회원가입시 DB에 들어갈 Boolean데이터입력
-                this.User.bnCheck = false;
+                this.User.is_business = false;
                 // 일반,사업자 radio선택 시, 사업자번호 확인하는칸 활성화 담당
                 this.Common.open_bnNumber = false;
-                this.User.b_no = '';
+                this.User.business_number = '';
                 $('#SignUp_bn').attr("required", false);
-                this.User.userno = 'N';
+                this.User.user_id = 'N';
             } else {
-                this.CheckInfo.bnCheck = false;
-                this.User.b_no = '';
+                this.CheckInfo.is_business = false;
+                this.User.business_number = '';
                 this.Common.open_bnNumber = true;
-                this.User.userno = 'B';
+                this.User.user_id = 'B';
                 $('#SignUp_bn').attr("required", true);
             }
 
         },
         //사업자번호 확인 API
         Check_Business_Number(){
-            const b_no = this.User.b_no.replaceAll('-', '');
-            console.log(b_no)
-            var data = { "b_no":  [b_no] };
-            console.log(data.b_no);
+            const business_number = this.User.business_number.replaceAll('-', '');
+            console.log(business_number)
+            var data = { "b_no":  [business_number] };
+            console.log(data.business_number);
             axios.post("https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=qaJs1GHTyoLGcztYwOmuuQrV8qrgsos8R3r%2FpIQdyqX2HWAX%2Fy8tlU33sKXL0L0XkV%2FBAGqk8BT8KMVPoZn25g%3D%3D", data)
                 .then((result) => {
                     console.log(result.data.data[0].b_stt);
                     const b_stt = result.data.data[0].b_stt;
                     if(b_stt == '계속사업자'){
                        console.log('완료');
-                        this.BN_Check(b_no);
+                        this.BN_Check(business_number);
                         
                     }else{
                         alert('없는 사업자 번호입니다. 다시한번 확인 부탁드립니다.')
@@ -387,15 +387,15 @@ export default {
             
         },
         //중복 검사
-        BN_Check(b_no){
-            var data = { "b_no": b_no };
+        BN_Check(business_number){
+            var data = { "business_number": business_number };
             axios.post("/ctg/BN_Check", data)
                 .then((res) => {
                     console.log(res);
                 if(res.data==0){
-                        this.CheckInfo.bnCheck = true;
-                        this.User.bnCheck = true;
-                        this.User.b_no = b_no;
+                        this.CheckInfo.is_business = true;
+                        this.User.is_business = true;
+                        this.User.business_number = business_number;
                         $('#SignUp_bn').attr('readonly', true);
                         
                         alert('사업자 번호 확인되었습니다.')
@@ -477,7 +477,7 @@ export default {
                 return false;
             }
             // 여기까지 올경우 insert진행
-            this.User.detailAddress = this.sanitizeInput(this.User.detailAddress);
+            this.User.detail_address = this.sanitizeInput(this.User.detail_address);
             axios.post('/ctg/Ins_Ctg_Member', this.User)
                 .then((res) => {
                     console.log(res)

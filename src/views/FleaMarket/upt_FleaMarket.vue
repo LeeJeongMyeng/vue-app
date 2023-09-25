@@ -6,7 +6,7 @@
      <table>
             <tr>
                  
-                 <td> <input type="hidden"  v-model="FleaMarket.userno" id="userno" >
+                 <td> <input type="hidden"  v-model="FleaMarket.user_id" id="user_id" >
                         <input type="hidden" v-model="FleaMarket.email" id="email" >
                  </td>
             </tr>
@@ -18,8 +18,8 @@
             </tr>
             <tr>
                 <th> 신청마감일자 </th>
-                <td style="width: 21%;"> <input type="date" id="endDate" v-model="FleaMarket.endDate"></td>
-                <td style="font-size: 17px; font-weight: bolder;">모집규모<input type="text" v-model="FleaMarket.approvalCnt" style="margin: 0 0 0 14px; width: 122px;"
+                <td style="width: 21%;"> <input type="date" id="end_date" v-model="FleaMarket.end_date"></td>
+                <td style="font-size: 17px; font-weight: bolder;">모집규모<input type="text" v-model="FleaMarket.max_applicants" style="margin: 0 0 0 14px; width: 122px;"
                     oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"></td>
             </tr>
             <tr class="addressbox">
@@ -40,7 +40,7 @@
                         <h1 style="text-align: center; font-size: 28px; font-weight: bold; padding: 52px 0 0 0;">현재 첨부된 행사 이미지</h1>
                         <hr style="width: 80%;">
                         <div class="image-container">
-                        <div class="image-item" v-for="item in FleaMarket_files" :key="item.fno">
+                        <div class="image-item" v-for="item in FleaMarket_files" :key="item.post_id">
                         <img id="cardImg" :src="getImagePath(item.uuid_file_name)" alt="">
                         </div>
                         </div>
@@ -101,7 +101,7 @@ export default  {
     },
     created(){
         
-            this.FleaMarket.userno = this.member.userno;
+            this.FleaMarket.user_id = this.member.user_id;
             this.FleaMarket.email = this.member.email;
             //수정용 데이터 받아오기
             this.get_Fleamarket();
@@ -117,7 +117,7 @@ export default  {
                 imagelist: [],        // 불러온 이미지들의 url을 저장하는 객체
                 imagecnt: 0,
                 FormData: '', //파일 
-                endDate:'',
+                end_date:'',
                 
             },
             //CKEditer
@@ -126,14 +126,14 @@ export default  {
             },
             //데이터 전송용
             FleaMarket:{
-                fno : this.$route.query.fno,
-                userno: '', //작성자 회원번호
+                post_id : this.$route.query.post_id,
+                user_id: '', //작성자 회원번호
                 email:'',
                 title: '', // 제목
-                endDate: '', //게시글 종료날짜
-                address:'',
-                detailAddress:'',
-                approvalCnt:10, //모집인원수
+                end_date: '', //게시글 종료날짜
+                location:'',
+                sub_location:'',
+                max_applicants:10, //모집인원수
                 content: `<div style="background:#eeeeee;border:1px solid #cccccc;padding:5px 10px;">개요<br />
                                         &nbsp;</div>
 
@@ -307,16 +307,16 @@ export default  {
     methods:{
         //게시글 정보 들고오기
         get_Fleamarket() {
-            console.log(this.$route.query.fno)
-            if (this.FleaMarket.userno == this.$store.state.member.userno) {
-            axios.get('/ctg/get_FleaMarket', { params: { fno: this.$route.query.fno } })
+            console.log(this.$route.query.post_id)
+            if (this.FleaMarket.user_id == this.$store.state.member.user_id) {
+            axios.get('/ctg/get_FleaMarket', { params: { post_id: this.$route.query.post_id } })
                 .then((res) => {
                     console.log(res)
                      this.FleaMarket = res.data.FleaMarket
                      this.FleaMarket_files = res.data.FleaMarket_files
-                     console.log(res.data.FleaMarket.address)
-                     $('#sample6_address').val(res.data.FleaMarket.address);
-                     $('#sample6_detailAddress').val(res.data.FleaMarket.detailAddress);
+                     console.log(res.data.FleaMarket.location)
+                     $('#sample6_address').val(res.data.FleaMarket.location);
+                     $('#sample6_detailAddress').val(res.data.FleaMarket.sub_location);
 
                 })
                 .catch((err) => console.log(err))
@@ -420,15 +420,15 @@ export default  {
         },
         Check_Reg(){
 
-             // console.log(this.FleaMarket.userno)
+             // console.log(this.FleaMarket.user_id)
             // console.log(this.FleaMarket.email)
             // console.log(this.FleaMarket.title)
-            // console.log(this.FleaMarket.endDate)
-            // console.log(this.FleaMarket.address)
-            // console.log(this.FleaMarket.approvalCnt)
+            // console.log(this.FleaMarket.end_date)
+            // console.log(this.FleaMarket.location)
+            // console.log(this.FleaMarket.max_applicants)
             // console.log(this.FleaMarket.content)
-             this.FleaMarket.address = $('#sample6_address').val();
-            this.FleaMarket.detailAddress = $('#sample6_detailAddress').val();
+             this.FleaMarket.location = $('#sample6_address').val();
+            this.FleaMarket.sub_location = $('#sample6_detailAddress').val();
             
 
            
@@ -436,13 +436,13 @@ export default  {
             if(this.FleaMarket.title =='' || this.FleaMarket.title.length<10){
                 alert('제목은 5자이상 입력 부탁드립니다.')
                 return false;
-            }else if(this.FleaMarket.endDate == ''){
+            }else if(this.FleaMarket.end_date == ''){
                 alert('모집 마감 일자를 선택해주세요')
                 return false;
-            }else if(this.FleaMarket.approvalCnt=='' || this.FleaMarket.approvalCnt < 10){
+            }else if(this.FleaMarket.max_applicants=='' || this.FleaMarket.max_applicants < 10){
                 alert('모집인원은 최소 10명 이상입니다.')
                 return false;
-            }else if(this.FleaMarket.address ==''){
+            }else if(this.FleaMarket.location ==''){
                 alert('행사 진행 장소 선택 부탁드립니다.')
                 return false;
             }else if(this.FleaMarket.content == ''){
@@ -478,7 +478,13 @@ export default  {
                 .then((response) => {
                     console.log(response)
                     alert('수정 완료 되었습니다.')
-                    this.$router.push('/');
+                     setTimeout(() => {
+                       this.$router.push('/');
+                    }, 500);
+                    
+                        
+                    
+                    
                 })
                 .catch((error) => {
                     console.log(error)
@@ -493,7 +499,7 @@ export default  {
             //뒤에 시간은 제거
             let minStr = sDate.toISOString().split('T')[0];
             //input date에 오늘부터 이전날짜는 지정할 수 없도록 설정
-            $("#endDate").prop("min", minStr);
+            $("#end_date").prop("min", minStr);
         },
         getImagePath(filename) {
             return require('@/assets/img/fleamarket/' + filename);
@@ -542,7 +548,7 @@ export default  {
         
     }
 
-    table tr #stDate,#endDate{
+    table tr #stDate,#end_date{
         width: 57%;
     }
     ckeditor{
