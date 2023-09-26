@@ -7,14 +7,14 @@
                     <th class="Notic_th">제목</th>  
                     <td class="Notic_td">{{ Notic.title}}</td>  
                     <th class="Notic_th">중요도</th>  
-                    <td class="Notic_td" v-if="Notic.impWhether" style="color:red">중요글</td>
+                    <td class="Notic_td" v-if="Notic._important" style="color:red">중요글</td>
                     <td class="Notic_td" v-else>일반글</td> 
                 </tr>
                 <tr> 
                     <th class="Notic_th">작성일</th>
-                    <td class="Notic_td">{{ Notic.regDate}}</td>
+                    <td class="Notic_td">{{ Notic.reg_date}}</td>
                     <th class="Notic_th">공지종료일</th>
-                    <td class="Notic_td" v-if="Notic.delDateCheck">{{ Notic.endDate }}</td>
+                    <td class="Notic_td" v-if="Notic.delDateCheck">{{ Notic.end_date }}</td>
                     <td class="Notic_td" v-else>-</td>
                 </tr>
                 <tr>
@@ -22,7 +22,6 @@
                     <td colspan="3" class="Notic_td">
                         <div v-for="item in Notic_files" :key="item.fileno">
                             <a href="#" @click="filedownload(item.origin_file_name,item.chg_source_filename)">{{ item.origin_file_name }}</a>
-                           
                         </div>
                     </td>
                 </tr>
@@ -57,7 +56,7 @@ export default  {
     data() {
         return {
             common:{
-                ntno:this.$route.query.ntno
+                notice_id:this.$route.query.notice_id
             },
             //CKEditer
             editorConfig: {

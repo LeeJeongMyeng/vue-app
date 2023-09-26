@@ -13,16 +13,16 @@
           </thead>
 
           <tbody id="Notic_tbody">
-            <tr style="height: 32px; font-weight: bold;" v-for="item in Notic_List.noticList" :key="item.ntno" @click="get_DetailNotic(item.ntno)">
-                  <td>{{ item.ntno }}</td>
+            <tr style="height: 32px; font-weight: bold;" v-for="item in Notic_List.noticList" :key="item.notice_id" @click="get_DetailNotic(item.notice_id)">
+                  <td>{{ item.notice_id }}</td>
                   <td>
-                    <span v-if="item.impWhether" style="color: red;">중요글</span>
+                    <span v-if="item._important" style="color: red;">중요글</span>
                     <span v-else>일반글</span>
                   </td>
                   <td style="text-align: left;"><span style="color: red;">&#60;공지&#62;</span>{{ item.title }}</td>
-                  <td>{{ item.regDate }}</td>
-                  <td>{{ item.uptDate }}</td>
-                  <td>{{ item.delDate }}</td>
+                  <td>{{ item.reg_date }}</td>
+                  <td>{{ item.upt_date }}</td>
+                  <td>{{ item.end_date }}</td>
                 </tr>
           </tbody>
 
@@ -109,7 +109,7 @@ export default  {
             axios.post('/ctg/get_Notic_List',this.Search)
             .then((res) => {
                 console.log(res);
-                this.Notic_List = res.data.Notic_List;
+                this.Notic_List = res.data;
             }).catch((err) => console.log(err))
         },
         //이전페이지
@@ -134,9 +134,9 @@ export default  {
           }
         },
         //상세조회로 이동
-        get_DetailNotic(ntno){
+        get_DetailNotic(notice_id){
          
-            this.$router.push({ name: 'get_Notic', query: { ntno } });
+            this.$router.push({ name: 'get_Notic', query: { notice_id } });
         }
     }
 }

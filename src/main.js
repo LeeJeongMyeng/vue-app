@@ -106,18 +106,18 @@ router.beforeEach(function (to, from, next) {
   // to : 이동할 url
   // from : 현재 url
   // next : to에서 지정한 url로 이동하기 위해 꼭 호출해야 하는 함수
-  axios.get("/ctg/account_check")
-    .then((res) => {
-        console.log('axios.router.beforeEach : ',res.data)
-        if (res.data !== null && res.data !== "") {
-          store.commit("setAccount", res.data);
-        } else {
-          store.commit("setAccount", null);
-          store.dispatch("ctl_Log_Btn", false);
-          sessionStorage.removeItem("user_id");
-          Cookies.remove("token"); // 쿠키 삭제
-        }
-  })
+  // axios.get("/ctg/account_check")
+  //   .then((res) => {
+  //       console.log('axios.router.beforeEach : ',res.data)
+  //       if (res.data !== null && res.data !== "") {
+  //         store.commit("setAccount", res.data);
+  //       } else {
+  //         store.commit("setAccount", null);
+  //         store.dispatch("ctl_Log_Btn", false);
+  //         sessionStorage.removeItem("user_id");
+  //         Cookies.remove("token"); // 쿠키 삭제
+  //       }
+  // })
 
     const requiresAuth = to.meta.requiresAuth !== undefined ? to.meta.requiresAuth : false;
     if (requiresAuth) {
