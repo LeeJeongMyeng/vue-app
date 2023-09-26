@@ -78,7 +78,7 @@ export default {
        },
        Check_User_BN(){
         console.log(this.$store.state.user_id)
-                  this.Go_to_Page('/ctg/reg_FleaMarket')
+                  this.Go_to_Page('/ctg/reg_FleaMarketPage')
         
        },
        Go_to_Page(pagename){

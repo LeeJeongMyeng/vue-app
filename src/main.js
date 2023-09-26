@@ -45,33 +45,57 @@ axios.interceptors.response.use(
         console.log('axios.interceptors.response : ',error.response.data.message);
       
         if(error.response && error.response.status){
-              // switch (error.response.status) {
-              //   case 400:
-              //     alert("400에러");
-              //     break;
-              //   case 401:
-              //     alert("401에러");
-              //     break;
-              //   case 403:
-              //     alert("사업자회원만 사용 가능합니다.");
-              //     break;
-              //   case 404:
-              //     alert('404dpfj')
-              //     break;
-              //   case 405:
-              //     alert("405 에러");
-              //     break;
-              //   case 406:
-              //     alert(" 406에러 잠시 후 다시 시도해주세요.");
-              //     break;
-              //   case 500:
-              //     alert("500에러 업로드 실패.");
-              //     break;
-              //   case 503:
-              //     // ...
-              //     break;
-              // }
-          alert(error.response.data.message);
+          console.log(
+            "axios.interceptors.response.use => ",
+            error.response.data.message
+          );
+           alert(error.response.data.message);
+              switch (error.response.status) {
+                //서버로 요청이 전송되지만 잘못된 구문으로 서버가 이해하지 못할때
+                // JSON형식이 잘못되었을 때
+                case 400:
+                  //alert("400에러");
+                  break;
+                //인증실패(로그인 유무)
+                case 401:
+                  //alert("401에러");
+                  break;
+                //권한없음
+                case 403:
+                  //alert("사업자회원만 사용 가능합니다.");
+                  break;
+                //요청페이지 부재
+                case 404:
+                  router.push({
+                     name: 'errorPage',
+                     params: { errorCode: 404, errorMessage: error.response.data.message }
+                     });
+                 
+                  break;
+                //GET/POST 접근 에러
+                case 405:
+                    router.push({
+                      name: "errorPage",
+                      params: { errorCode: 405, errorMessage: error.response.data.message }
+                    });
+                  break;
+                //반환타입 에러 클라이언트요청JSON, 서버응답XML일경우 등
+                case 406:
+                    router.push({
+                      name: "errorPage",
+                      params: { errorCode: 500, errorMessage: error.response.data.message }
+                    });
+                  break;
+                //서버내부에러(코드의버그, 예외처리 부재)
+                case 500:
+                   router.push("/common/error");
+                  break;
+                //일시적인 문제 혹은 과부화 등
+                case 503:
+                  // 잠시 후 다시 시도
+                  break;
+              }
+         
         }
         return Promise.reject(new Error("Interceptor handled the error"));
     }
@@ -97,7 +121,7 @@ router.beforeEach(function (to, from, next) {
 
     const requiresAuth = to.meta.requiresAuth !== undefined ? to.meta.requiresAuth : false;
     if (requiresAuth) {
-      axios.post("/ctg/check-user-bn")
+      axios.get("/ctg/check-user-bn")
         .then((response) => {
           console.log("router beforeEach => ", response);
           if (response.data) {

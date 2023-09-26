@@ -310,7 +310,7 @@ export default  {
             //로그인 안하고 신청시
             if(!this.$store.state.user_id || this.$store.state.user_id ==''){
                 alert('로그인 이후 이용 부탁드립니다.')
-                this.$router.push('/user/signIn')
+                //this.$router.push('/user/signIn')
                 return false;
             }
             //종료된 게시글일경우

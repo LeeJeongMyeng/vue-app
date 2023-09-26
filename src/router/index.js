@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from "vue-router";
 import HomeView from '../views/HomeView.vue'
 
 const routes = [
@@ -18,12 +18,12 @@ const routes = [
     component: () => import("../views/User/SignUp.vue"),
   },
   {
-    path: "/ctg/reg_FleaMarket",
+    path: "/ctg/reg_FleaMarketPage",
     name: "reg_FleaMarket",
     component: () => import("../views/FleaMarket/reg_FleaMarket.vue"),
-    meta:{
-      requiresAuth:true
-    }
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/ctg/get_FleaMarket",
@@ -31,7 +31,7 @@ const routes = [
     component: () => import("../views/FleaMarket/get_FleaMarket.vue"),
   },
   {
-    path: "/ctg/upt_FleaMarket",
+    path: "/ctg/upt_FleaMarketPage",
     name: "upt_FleaMarket",
     component: () => import("../views/FleaMarket/upt_FleaMarket.vue"),
   },
@@ -50,12 +50,21 @@ const routes = [
     name: "my_List",
     component: () => import("../views/User/my_List.vue"),
   },
+  {
+    path: "/Common/Error",
+    name: "errorPage",
+    component: () => import("../views/Common/Error.vue"),
+  },
+  {
+    path: "/:catchAll(.*)",
+    redirect: { name: "errorPage" },
+  },
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes
-})
+  history: createWebHashHistory(process.env.BASE_URL),
+  routes,
+});
 
 export default router
 
