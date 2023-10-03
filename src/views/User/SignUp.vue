@@ -21,16 +21,25 @@
                 </tr>
                 <tr>
                     <th> 비밀번호 </th>
-                    <td> <input type="password" id="SignUp_pwd" v-model="User.password" :class="active_css.password" @keyup="Check_Pwd_Regular" maxlength="20" autocomplete=”off”> </td>
+                    <td style="text-align: left; padding-left: 26px;">
+                        <span>*8~16자 영어/특수문자/숫자 중 2가지 이상조합*</span> 
+                        <input type="password" id="SignUp_pwd" v-model="User.password" :class="active_css.password" @keyup="Check_Pwd_Regular" maxlength="20" autocomplete=”off” placeholder="비밀번호 입력"> 
+                    </td>
                 </tr>
                 <tr>
                     <th> 비밀번호확인 </th>
-                    <td> <input type="password" id="SignUp_pwd2" v-model="User.password2" @keyup="Check_Pwd_Regular2" placeholder="비밀번호를 한번 더 입력해주세요" :class="active_css.password2" maxlength="20" autocomplete=”off” > </td>
+                    <td>
+                        
+                        <input type="password" id="SignUp_pwd2" v-model="User.password2" @keyup="Check_Pwd_Regular2" placeholder="비밀번호를 한번 더 입력해주세요" :class="active_css.password2" maxlength="20" autocomplete=”off” >
+                    </td>
                 </tr>
                 
                 <tr>
                     <th> 핸드폰번호  </th>
-                    <td> <input type="text" id="SignUp_phonenumber" v-model="User.phone_number" :class="active_css.phoneNumber" @keyup="Check_PN_Regular" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" minlength="10" maxlength="11" > </td>
+                    <td  style="text-align: left; padding-left: 26px;">
+                        <span>*- 제외 11자*</span>
+                        <input type="text" id="SignUp_phonenumber" v-model="User.phone_number" :class="active_css.phoneNumber" @keyup="Check_PN_Regular" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" minlength="10" maxlength="11" placeholder="01012345678">
+                    </td>
                 </tr>
                 <tr class="addressbox">
                     <th> 주소 </th>
@@ -550,6 +559,11 @@ export default {
 }
 .signUpContainer .signUpBox table tr>td:nth-child(3){
     width: 30%;
+}
+.signUpContainer .signUpBox .signUp_Input table tr td span{
+    font-size: 10px;
+    color: red;
+    font-weight: bolder;
 }
 
 .signUpContainer .signUpBox .signUp_Input {

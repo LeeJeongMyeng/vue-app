@@ -42,14 +42,18 @@ axios.interceptors.response.use(
         return response;
     },
     function(error){
-        console.log('axios.interceptors.response : ',error.response.data.message);
+        console.log('axios.interceptors.response : ',error.response);
       
         if(error.response && error.response.status){
           console.log(
             "axios.interceptors.response.use => ",
             error.response.data.message
           );
-           alert(error.response.data.message);
+          if (typeof error.response.data !== "string") {
+            alert(error.response.data.message);
+          } else {
+            alert(error.response.data);
+          }
               switch (error.response.status) {
                 //서버로 요청이 전송되지만 잘못된 구문으로 서버가 이해하지 못할때
                 // JSON형식이 잘못되었을 때
@@ -66,11 +70,6 @@ axios.interceptors.response.use(
                   break;
                 //요청페이지 부재
                 case 404:
-                  router.push({
-                     name: 'errorPage',
-                     params: { errorCode: 404, errorMessage: error.response.data.message }
-                     });
-                 
                   break;
                 //GET/POST 접근 에러
                 case 405:
@@ -106,18 +105,18 @@ router.beforeEach(function (to, from, next) {
   // to : 이동할 url
   // from : 현재 url
   // next : to에서 지정한 url로 이동하기 위해 꼭 호출해야 하는 함수
-  // axios.get("/ctg/account_check")
-  //   .then((res) => {
-  //       console.log('axios.router.beforeEach : ',res.data)
-  //       if (res.data !== null && res.data !== "") {
-  //         store.commit("setAccount", res.data);
-  //       } else {
-  //         store.commit("setAccount", null);
-  //         store.dispatch("ctl_Log_Btn", false);
-  //         sessionStorage.removeItem("user_id");
-  //         Cookies.remove("token"); // 쿠키 삭제
-  //       }
-  // })
+  axios.get("/ctg/account_check")
+    .then((res) => {
+        console.log('axios.router.beforeEach : ',res.data)
+        if (res.data !== null && res.data !== "") {
+          store.commit("setAccount", res.data);
+        } else {
+          store.commit("setAccount", null);
+          store.dispatch("ctl_Log_Btn", false);
+          sessionStorage.removeItem("user_id");
+          Cookies.remove("token"); // 쿠키 삭제
+        }
+  })
 
     const requiresAuth = to.meta.requiresAuth !== undefined ? to.meta.requiresAuth : false;
     if (requiresAuth) {
@@ -128,13 +127,10 @@ router.beforeEach(function (to, from, next) {
             // 서버에서 true 반환 시
             next(); // 페이지 이동 허용
           } else {
-            next(from); // 이전 컴포넌트로 이동
+            //next(from); // 이전 컴포넌트로 이동
           }
         })
-        .catch((error) => {
-          console.log(error); // 에러 출력
-          next(from); // 이전 컴포넌트로 이동
-        });
+        
     } else {
       // 인증이 필요하지 않은 페이지인 경우 그대로 진행
       next();
@@ -143,3 +139,4 @@ router.beforeEach(function (to, from, next) {
         // store.commit("setAccount", data || null);
   //next();
 });
+

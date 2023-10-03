@@ -61,8 +61,10 @@ export default {
                    // this.$emit('data', false);
                     window.alert('로그인되었습니다.');
                     this.$router.push({ name: 'home' })
-                }).catch((err) => 
-                    window.alert('로그인 정보가 존재하지않습니다.')
+                }).catch((err) => {
+                    
+                }
+                   
                 )
             }else{
                 alert('올바른 이메일 양식 입력 부탁드립니다.')

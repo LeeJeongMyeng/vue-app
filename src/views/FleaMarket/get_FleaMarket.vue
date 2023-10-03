@@ -14,7 +14,7 @@
                             <hr style="width: 80%;">
                             <div class="image-container">
                             <div class="image-item" v-for="item in FleaMarket_files" :key="item.post_id">
-                            <img id="cardImg" :src="getImagePath(item.uuid_file_name)" alt="">
+                            <img id="cardImg" :src="getImageUrl(item.uuid_file_name)" alt="Example Image">
                             </div>
                             </div>
                             <hr style="width: 80%;">
@@ -22,7 +22,8 @@
 
     <h1 class="Info_title">모집 상세 설명(필독!)</h1>
     
-    <ckeditor id="ckeditor" v-model="FleaMarket.content" :config="editorConfig"></ckeditor>
+    <!-- <ckeditor id="ckeditor" v-model="FleaMarket.content" :config="editorConfig"></ckeditor> -->
+    <div id="ckeditor" style="height: 700px; overflow:auto; margin:0 0 20px 0; border-bottom: 1px solid; border-top:1px solid; padding: 5px;" v-html="FleaMarket.content"></div>
     
     <div id="get_controlbox" v-if="FleaMarket.user_id == this.$store.state.user_id">
         <button type="button" class="getFMbtn" @click="openModal"> 신청자 확인 </button>
@@ -171,6 +172,7 @@ export default  {
             },
             //CKEditer
             editorConfig: {
+               removePlugins: 'toolbar',
                 readOnly:true,
                 height : '700px'
                 // The configuration of the editor.
@@ -257,8 +259,10 @@ export default  {
             }
         },
         //데이터 이미지 처리시에 이미지path설정
-        getImagePath(filename) {
-            return require('@/assets/img/fleamarket/' + filename);
+       getImageUrl(filename) {
+            const serverBaseUrl = '';
+
+            return `${serverBaseUrl}/${filename}`;
         },
         
         // 모달 열기

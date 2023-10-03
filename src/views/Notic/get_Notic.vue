@@ -80,8 +80,8 @@ export default  {
     methods:{
         //페이지 랜더링시 데이터 호출
         get_Notic(){
-            console.log(this.$route.query.ntno)
-            axios.get('/ctg/get_Notic', {params:{ntno:this.$route.query.ntno }})
+            console.log(this.$route.query.notice_id)
+            axios.get('/ctg/get_Notic', {params:{notice_id:this.$route.query.notice_id }})
                 .then((res) => {
                     console.log(res)
                     this.Notic = res.data.Notic;

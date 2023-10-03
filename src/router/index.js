@@ -49,6 +49,9 @@ const routes = [
     path: "/ctg/my_List",
     name: "my_List",
     component: () => import("../views/User/my_List.vue"),
+    // meta: {
+    //   requiresAuth: true,
+    // },
   },
   {
     path: "/Common/Error",

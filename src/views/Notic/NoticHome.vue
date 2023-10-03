@@ -8,7 +8,7 @@
               <th style="width: 13%;">중요도</th>
               <th style="width: 48%;">제목</th>
               <th style="width: 15%;">작성일</th>
-              <th style="width: 15%;">수정일</th>
+              <th style="width: 15%;">공지종료일</th>
             </tr>
           </thead>
 
@@ -21,7 +21,6 @@
                   </td>
                   <td style="text-align: left;"><span style="color: red;">&#60;공지&#62;</span>{{ item.title }}</td>
                   <td>{{ item.reg_date }}</td>
-                  <td>{{ item.upt_date }}</td>
                   <td>{{ item.end_date }}</td>
                 </tr>
           </tbody>

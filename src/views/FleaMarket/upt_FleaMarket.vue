@@ -41,7 +41,7 @@
                         <hr style="width: 80%;">
                         <div class="image-container">
                         <div class="image-item" v-for="item in FleaMarket_files" :key="item.post_id">
-                        <img id="cardImg" :src="getImagePath(item.uuid_file_name)" alt="">
+                        <img :src="getImageUrl(item.uuid_file_name)" alt="Example Image"> 
                         </div>
                         </div>
                         <hr style="width: 80%;">
@@ -101,7 +101,7 @@ export default  {
     },
     created(){
         
-            this.FleaMarket.user_id = thisuser_id;
+            this.FleaMarket.user_id = this.$store.state.user_id;
             //this.FleaMarket.email = this.member.email;
             //수정용 데이터 받아오기
             this.get_Fleamarket();
@@ -491,7 +491,6 @@ export default  {
                 })
         },
         
-        
         set_minDate(){
             let sDate = new Date();
             //날짜에서 하루더함
@@ -501,9 +500,10 @@ export default  {
             //input date에 오늘부터 이전날짜는 지정할 수 없도록 설정
             $("#end_date").prop("min", minStr);
         },
-        getImagePath(filename) {
-            return require('@/assets/img/fleamarket/' + filename);
-        }
+        getImageUrl(filename) {
+            const serverBaseUrl = '';
+            return `${serverBaseUrl}/${filename}`;
+        },
         
        
     }

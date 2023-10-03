@@ -10,8 +10,9 @@
                 <!-- <img src="C:\Users\TA9\git\vue-app\src\assets\img\fleamarket\c0b45714-d7af-40e8-8327-68bcdf3332c6_다운로드 (3).jpg" alt=""> -->
                 <div class="Imgbox">
                   <!-- <img id="cardImg" src='../assets/img/fleamarket/7410a5ff-fdfd-4202-ad90-479df5fe9043_플마3.jpg' alt=""> -->
-                <img id="cardImg" :src="require('@/assets/img/fleamarket/' + item.uuid_file_name)" alt="">
-                </div>
+                <!-- <img id="cardImg" :src="require('@/assets/img/fleamarket/' + item.uuid_file_name)" alt=""> -->
+                <img :src="getImageUrl(item.uuid_file_name)" alt="Example Image"> 
+              </div>
               <div class="Infobox">
               <h1 class="card_title">{{ item.title }}</h1>
               <h2 class="card_address">위&nbsp;&nbsp;&nbsp;치 👉 {{ item.location }}</h2>
@@ -140,8 +141,12 @@ export default {
       console.log(post_id);
       //this.body.fno
       this.$router.push({ name: 'get_FleaMarket', query:{post_id:post_id} }); //추가한 상세페이지 라우터
-    }
+    },
+    getImageUrl(filename) {
+      const serverBaseUrl = '';
 
+      return `${serverBaseUrl}/${filename}`;
+    },
 
   }
 }
