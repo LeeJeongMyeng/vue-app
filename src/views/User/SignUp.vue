@@ -7,7 +7,8 @@
             <table>
                 <tr>
                     <th><span></span> 성함 </th>
-                    <td> <input type="text" id="SignUp_name" placeholder="홍길동" v-model="User.name" :class="active_css.name" maxlength="5" autocomplete=”off”> </td>
+                    <td><input type="text" id="SignUp_name" placeholder="홍길동" v-model="User.name" :class="active_css.name" maxlength="5" autocomplete=”off” oninput="this.value = this.value.replace(/[^가-힣ㄱ-ㅎㅏ-ㅣ]/g, '')">
+     </td>
                 </tr>
                 <tr>
                     <th>이메일</th>
@@ -159,11 +160,7 @@ export default {
           //  이메일 중복검사
             axios.post('/ctg/Check_SignUp_email', { email: UserEmail })
                 .then((res) => {
-                    console.log(res)
                     if(res.data.checkNum == 0){
-
-                       
-                       //alert('사용 가능한 이메일입니다.')
                         // 이메일 전송
                        this.Send_Email(UserEmail);
                         $('#SignUp_email').attr('readonly',true);
@@ -188,8 +185,6 @@ export default {
             for (let i = 0; i < 6; i++) {
                 SixRanNum += Math.floor(Math.random() * 10)
             }
-            console.log(SixRanNum);
-            //for Check_Email_Code() Method, apply the value to Email_Code in data 
             this.Common.Email_Code = SixRanNum;
             //EmailJS From
             const templateParams = {
@@ -206,7 +201,6 @@ export default {
                     this.active_css.email = 'active_valid';
                     alert('입력하신 메일을 확인하시고, 인증번호를 입력부탁드립니다.');
                     $('#SignUp_email_code').focus();
-                    console.log(response);
                 },(error) => {
                     alert('정상적인 제출이 이루어지지 않았습니다. 다시 시도해주세요!')
                     console.log(error);
@@ -263,11 +257,9 @@ export default {
             if(Check){
                 this.active_css.password2 = 'active_valid';
                 this.CheckInfo.password2 = true;
-                console.log('1차:'+this.CheckInfo.password + ': 2차:' + this.CheckInfo.password2);
             }else{
                 this.active_css.password2 = 'active_invalid';
                 this.CheckInfo.password2 = false;
-                console.log('1차:' + this.CheckInfo.password + ': 2차:' + this.CheckInfo.password2);
 
             }
 
@@ -377,15 +369,12 @@ export default {
         //사업자번호 확인 API
         Check_Business_Number(){
             const business_number = this.User.business_number.replaceAll('-', '');
-            console.log(business_number)
             var data = { "b_no":  [business_number] };
-            console.log(data.business_number);
             axios.post("https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=qaJs1GHTyoLGcztYwOmuuQrV8qrgsos8R3r%2FpIQdyqX2HWAX%2Fy8tlU33sKXL0L0XkV%2FBAGqk8BT8KMVPoZn25g%3D%3D", data)
                 .then((result) => {
                     console.log(result.data.data[0].b_stt);
                     const b_stt = result.data.data[0].b_stt;
                     if(b_stt == '계속사업자'){
-                       console.log('완료');
                         this.BN_Check(business_number);
                         
                     }else{
@@ -400,7 +389,6 @@ export default {
             var data = { "business_number": business_number };
             axios.post("/ctg/BN_Check", data)
                 .then((res) => {
-                    console.log(res);
                 if(res.data==0){
                         this.CheckInfo.is_business = true;
                         this.User.is_business = true;
@@ -421,12 +409,11 @@ export default {
             let Regular_Expression = '';
             let result = false;
             if (key == 'email') {
-                Regular_Expression = /[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[.0-9a-zA-Z])*.[a-zA-Z]$/i;
+                Regular_Expression = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[.0-9a-zA-Z])*\.[a-z]{2,3}$/i;
                 result = (Regular_Expression.test(value) && value != '');
             } else if (key == 'rrn') {
                 Regular_Expression = /^(?:[0-9]{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[1,2][0-9]|3[0,1]))-[1-4][0-9]{6}$/;
                 result = (value.length == 14 && (Regular_Expression.test(value)));
-                console.log(value.length + ':' + Regular_Expression.test(value));
             } else if (key == 'password'){
                 const pw = value;
                 const num = pw.search(/[0-9]/g); //숫자확인
@@ -467,13 +454,11 @@ export default {
 
             //데이터베이스에 입력될 데이터들 확인
             UserInf_kyes.forEach(key => {
-                console.log('User',key, ':', UserInf[key]);
             })
 
             // 유효성검사 => data.CheckInfo boolean전체 확인
             let totCheck = true;
             for(var i = 0; i< CheckInfo2_key.length; i++){
-                console.log('CheckInfo', CheckInfo2_key[i], ':', ChekcInfo[CheckInfo2_key[i]]);
                 if(ChekcInfo[CheckInfo2_key[i]] ==false) {
                     totCheck = false;
                     
@@ -489,7 +474,6 @@ export default {
             this.User.detail_address = this.sanitizeInput(this.User.detail_address);
             axios.post('/ctg/Ins_Ctg_Member', this.User)
                 .then((res) => {
-                    console.log(res)
 
                     alert('회원가입이 완료 되었습니다. 로그인 페이지로 이동합니다.')
                     this.$router.push({ name: 'SignIn' });

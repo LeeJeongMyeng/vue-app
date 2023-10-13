@@ -25,7 +25,7 @@
             <tr class="addressbox">
                         <th> 장소 </th>
                         <td> 
-                        <div style="display: flex;">
+                        <div style="display: flex; margin-top: 7px;">
                         <input type="hidden" id="sample6_postcode" placeholder="우편번호" readonly>
                         <input type="button" id="sample6_btn" @click="sample6_execDaumPostcode()" value="주소 찾기"><br>
                         </div> 
@@ -41,7 +41,7 @@
                         <hr style="width: 80%;">
                         <div class="image-container">
                         <div class="image-item" v-for="item in FleaMarket_files" :key="item.post_id">
-                        <img :src="getImageUrl(item.uuid_file_name)" alt="Example Image"> 
+                        <img :src="getImageUrl(item.uuid_file_name)" alt="Example Image"  style="width: 200px; height: 200px;"> 
                         </div>
                         </div>
                         <hr style="width: 80%;">
@@ -63,7 +63,7 @@
                 
                 <input id="customFile" type="file"  ref="files" @change="readInputFile" multiple accept="image/*"/>
                </td>
-               <td><span>*수정시 이미지 파일 첨부하지않을 경우, 기존 이미지 파일이 유지됩니다.*<br>
+               <td colspan="3"><span>*수정시 이미지 파일 첨부하지않을 경우, 기존 이미지 파일이 유지됩니다.*<br>
                          *수정시 이미지 파일을 새로 첨부할 경우, 기존 이미지는 삭제됩니다.*<br>
                          *최대 6개 이미지 등록이 가능합니다.*</span></td>
             </tr>
@@ -76,7 +76,6 @@
             </tr>
     </table>
     <div style="display: flex;"><button type="button" id="regFMbtn" @click="Check_Reg"> 수정완료 </button></div>
-    <!-- <div style="display: flex;"><button type="button" id="regFMbtn" @click="check"> 게시글 등록 </button></div> -->
   </div>
   </div>
 </template>
@@ -307,14 +306,19 @@ export default  {
     methods:{
         //게시글 정보 들고오기
         get_Fleamarket() {
-            console.log(this.$route.query.post_id)
             if (this.FleaMarket.user_id == this.$store.state.user_id) {
             axios.get('/ctg/get_FleaMarket', { params: { post_id: this.$route.query.post_id } })
                 .then((res) => {
-                    console.log(res)
-                     this.FleaMarket = res.data.FleaMarket
-                     this.FleaMarket_files = res.data.FleaMarket_files
-                     console.log(res.data.FleaMarket.location)
+
+                    var FleaMarket = res.data.FleaMarket;
+
+                        FleaMarket.sub_location = this.processHTML(FleaMarket.sub_location);
+                        FleaMarket.title = this.processHTML(FleaMarket.title);
+
+                     //this.FleaMarket = res.data.FleaMarket
+                     this.FleaMarket = FleaMarket;
+                    this.FleaMarket_files = res.data.FleaMarket_files
+
                      $('#sample6_address').val(res.data.FleaMarket.location);
                      $('#sample6_detailAddress').val(res.data.FleaMarket.sub_location);
 
@@ -395,7 +399,6 @@ export default  {
                 return false;
             }
             fileArr.forEach(function (f) {
-                console.log(f.size);
                 if (!f.type.match("image/.*")) {
                     alert("이미지 확장자만 업로드 가능합니다.");
                      $("#customFile").val("");
@@ -419,14 +422,6 @@ export default  {
            this.common.FormData = this.$refs.files.files
         },
         Check_Reg(){
-
-             // console.log(this.FleaMarket.user_id)
-            // console.log(this.FleaMarket.email)
-            // console.log(this.FleaMarket.title)
-            // console.log(this.FleaMarket.end_date)
-            // console.log(this.FleaMarket.location)
-            // console.log(this.FleaMarket.max_applicants)
-            // console.log(this.FleaMarket.content)
              this.FleaMarket.location = $('#sample6_address').val();
             this.FleaMarket.sub_location = $('#sample6_detailAddress').val();
             
@@ -457,11 +452,8 @@ export default  {
             const formData = new FormData();
             //파일 담기
             //수정이기때문에 파일없으면 담지않음.
-            console.log(this.common.FormData == '')
-            console.log(this.common.FormData.length)
             if(this.common.FormData.length > 0 || this.common.FormData != ''){
                 for (let i = 0; i < this.common.FormData.length; i++) {
-                    console.log('zz', this.common.FormData[i])
                     formData.append("files", this.common.FormData[i]);
                 }
             }
@@ -503,6 +495,26 @@ export default  {
         getImageUrl(filename) {
             const serverBaseUrl = '';
             return `${serverBaseUrl}/${filename}`;
+        },
+        //xss처리
+        sanitizeInput(value) {
+            value = value.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+            value = value.replaceAll("\\(", "&#40;").replaceAll("\\)", "&#41;");
+            value = value.replaceAll("'", "&#39;");
+            value = value.replace(/eval\((.*)\)/g, "");
+            value = value.replace(/["'][\s]*javascript:(.*)["']/g, "\"\"");
+            value = value.replace(/script/g, "");
+            return value;
+        },
+        //xss처리된거 반환
+        processHTML(html) {
+            const escapedHTML = html
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/\\\(/g, '&#40;')
+                .replace(/\\\)/g, '&#41;')
+                .replace(/'/g, '&#39;');
+            return escapedHTML;
         },
         
        

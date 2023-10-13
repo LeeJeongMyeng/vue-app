@@ -28,7 +28,7 @@
             <tr class="addressbox">
                         <th> 주소 </th>
                         <td> 
-                        <div style="display: flex;">
+                        <div style="display: flex; margin-top: 7px;">
                         <input type="hidden" id="sample6_postcode" placeholder="우편번호" readonly>
                         <input type="button" id="sample6_btn" @click="sample6_execDaumPostcode()" value="주소 찾기"><br>
                         </div> 
@@ -50,7 +50,7 @@
                 
                 <input id="customFile" type="file"  ref="files" @change="readInputFile" multiple accept="image/*"/>
                </td>
-               <td><span>*썸네일을 위해 최소 한장 이상의 사진 등록부탁드립니다.*  *최대 6개 이미지 등록이 가능합니다.*</span></td>
+               <td colspan="3"><span>*썸네일을 위해 최소 한장 이상의 사진 등록부탁드립니다.*  *최대 6개 이미지 등록이 가능합니다.*</span></td>
             </tr>
             <tr>
                 <td colspan='3'>
@@ -354,7 +354,6 @@ export default  {
                 return false;
             }
             fileArr.forEach(function (f) {
-                console.log(f.size);
                 if (!f.type.match("image/.*")) {
                     alert("이미지 확장자만 업로드 가능합니다.");
                      $("#customFile").val("");
@@ -380,14 +379,6 @@ export default  {
            this.common.FormData = this.$refs.files.files
         },
         Check_Reg(){
-
-             // console.log(this.FleaMarket.user_id)
-            // console.log(this.FleaMarket.email)
-            // console.log(this.FleaMarket.title)
-            // console.log(this.FleaMarket.end_date)
-            // console.log(this.FleaMarket.address)
-            // console.log(this.FleaMarket.max_applicants)
-            // console.log(this.FleaMarket.content)
              this.FleaMarket.location = $('#sample6_address').val();
             this.FleaMarket.sub_location = $('#sample6_detailAddress').val();
             
@@ -418,12 +409,10 @@ export default  {
         },
         //게시글 등록
         reg_FleaMarket() {
-            console.log(this.FleaMarket.end_date)
 
             //파일 담기
             const formData = new FormData();
             for (let i = 0; i < this.common.FormData.length; i++) {
-                console.log('zz', this.common.FormData[i])
                 formData.append("files", this.common.FormData[i]);
             }
             
@@ -442,7 +431,6 @@ export default  {
                 }
             })
                 .then((response) => {
-                    console.log(response)
                     setTimeout(() => {
                          alert('등록 완료 되었습니다.')
                           setTimeout(() => {

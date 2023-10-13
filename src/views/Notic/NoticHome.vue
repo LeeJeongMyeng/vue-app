@@ -1,6 +1,7 @@
 <template>
     <div id="Notic_Container">
         <h1>공지사항</h1>
+        <div style="height: 418px;">
         <table class="Notic_Table">
           <thead id="Notic_thead">
             <tr style="height: 32px; font-weight: bold;">
@@ -14,18 +15,18 @@
 
           <tbody id="Notic_tbody">
             <tr style="height: 32px; font-weight: bold;" v-for="item in Notic_List.noticList" :key="item.notice_id" @click="get_DetailNotic(item.notice_id)">
-                  <td>{{ item.notice_id }}</td>
+                  <td>{{ item.rownum }}</td>
                   <td>
                     <span v-if="item._important" style="color: red;">중요글</span>
                     <span v-else>일반글</span>
                   </td>
                   <td style="text-align: left;"><span style="color: red;">&#60;공지&#62;</span>{{ item.title }}</td>
                   <td>{{ item.reg_date }}</td>
-                  <td>{{ item.end_date }}</td>
+                  <td>{{ item.end_date? item.end_date:'-' }}</td>
                 </tr>
           </tbody>
-
         </table>
+        </div>
         <div id="Search_Container">
            <div class="SearchBox">
                 <label for ="status-select">검색내용:</label>
@@ -101,13 +102,11 @@ export default  {
     },
         //create를 통해서 공지사항 정보 가져오기
         get_Notic_List(){
-      console.log('후 curpage', this.$store.state.currentPage)
           this.Search.currentPage = this.$store.state.currentPage
           this.$store.state.title = this.Search.title
 
             axios.post('/ctg/get_Notic_List',this.Search)
             .then((res) => {
-                console.log(res);
                 this.Notic_List = res.data;
             }).catch((err) => console.log(err))
         },
@@ -123,12 +122,10 @@ export default  {
         },
     //다음페이지
         nextPage() {
-          console.log('변경전 curpage',this.$store.state.currentPage)
           if (this.$store.state.currentPage == this.Notic_List.totPage) {
             return false;
           } else {
             this.$store.dispatch('PlusCurrentPage');
-            console.log("nextpage", this.$store.state.currentPage);
             this.get_Notic_List();
           }
         },

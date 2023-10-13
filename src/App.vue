@@ -26,7 +26,6 @@
   //   const token_check = () => {
   //     axios.get("/ctg/account_check").then(({ data }) => {
 
-  //       console.log(data)
   //       if(data){
   //         store.commit("setAccount", data);
   //       }else{

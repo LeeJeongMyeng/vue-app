@@ -11,11 +11,22 @@ const routes = [
     path: "/user/signIn",
     name: "SignIn",
     component: () => import("../views/User/SignIn.vue"),
+    meta: {
+      check_Login: true,
+    },
   },
   {
     path: "/user/signUp",
     name: "signUp",
     component: () => import("../views/User/SignUp.vue"),
+    meta: {
+      check_Login: true,
+    },
+  },
+  {
+    path: "/user/UP",
+    name: "Update_Password",
+    component: () => import("../views/User/Update_Password.vue"),
   },
   {
     path: "/ctg/reg_FleaMarketPage",

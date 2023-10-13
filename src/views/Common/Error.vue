@@ -3,7 +3,7 @@
         <h1 class="Error-title">Error Page</h1>
         <div class="error-box">
             <h1 class="error-title" v-if="errorCode">{{ errorCode }}</h1>
-            <h1 class="error-title" v-else>404에러</h1>
+            <h1 class="error-title" v-else>에러</h1>
             <p class="error-message" v-if="errorMessage">{{ errorMessage }}</p>
             <p class="error-message" v-else>잘못된 접근입니다.</p>
         </div>

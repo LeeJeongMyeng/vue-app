@@ -11,14 +11,20 @@
                 <div class="Imgbox">
                   <!-- <img id="cardImg" src='../assets/img/fleamarket/7410a5ff-fdfd-4202-ad90-479df5fe9043_플마3.jpg' alt=""> -->
                 <!-- <img id="cardImg" :src="require('@/assets/img/fleamarket/' + item.uuid_file_name)" alt=""> -->
-                <img :src="getImageUrl(item.uuid_file_name)" alt="Example Image"> 
+                <!-- <img :src="getImageUrl(item.uuid_file_name)" alt="Example Image">  -->
+                <img id="cardImg" :src="getImageUrl2(item.uuid_file_name)" alt="Example Image"> 
               </div>
               <div class="Infobox">
               <h1 class="card_title">{{ item.title }}</h1>
+              <hr style="border: 0.1px solid gray; width: 100%;">
               <h2 class="card_address">위&nbsp;&nbsp;&nbsp;치 👉 {{ item.location }}</h2>
               <h2 class="card_regDate">작&nbsp;성&nbsp;일 👉 {{ item.reg_date }}</h2>
               <h2 class="card_regDate">모집종료일 👉 {{ item.end_date }}</h2>
-              <h2 class="card_Cnt">(현재/모집) {{ item.current_count }}/{{ item.max_applicants }} [{{ item.state }}]</h2>
+              <hr style="border: 0.1px solid gray; width: 100%;">
+              <div style="display: flex;"> 
+                <h2 class="card_Cnt" style="margin-right: auto;">총 신청자:{{ item.totCnt }}</h2>
+                <h2 class="card_Cnt"><span style="font-size: 12px;">(승인/모집)</span> {{ item.current_count }}/{{ item.max_applicants }} [<span :class="{ 'blue-text': item.state === '모집중', 'red-text': item.state === '모집종료' }">{{ item.state }}]</span></h2>
+              </div>
               </div>
           </div>
          </div>
@@ -46,7 +52,6 @@
 <script>
 // @ is an alias to /src
 
-import Card from "@/components/Card.vue";
 import axios from "axios";
 
 
@@ -89,25 +94,24 @@ export default {
     },
     get_FleaMarket_List(){
       //axios매개변수로 쓰도록 넣어줌
+      
         this.Fleamarket.currentPage = this.$store.state.currentPage
         this.$store.state.title = this.Fleamarket.title
       //state에 넣어서 새로고침해도 유지되도록 설정
 
         
-        console.log('start-currentPage', this.$store.state.currentPage);
-        console.log('start-currentPage', this.$store.state.title);
         
         axios.post('/ctg/get_FleaMarket_List',this.Fleamarket)
         .then((response) => {
-          console.log(response)
+          console.log(response.data)
           if(response.data.totPage==0){
             this.$store.state.currentPage=0;
           }
-          console.log(response.data)
 
-          setTimeout(() => {
+         // setTimeout(() => {
             this.FleaMarketList = response.data;
-          }, 500);
+
+          //}, 500);
           
 
           //this.FleaMarket.totpage = response.data.FleaMarketList.totPage
@@ -133,12 +137,10 @@ export default {
         return false;
       } else {
         this.$store.dispatch('PlusCurrentPage');
-        console.log("nextpage", this.$store.state.currentPage);
         this.get_FleaMarket_List();
       }
     },
     get_Detail_FM(post_id){
-      console.log(post_id);
       //this.body.fno
       this.$router.push({ name: 'get_FleaMarket', query:{post_id:post_id} }); //추가한 상세페이지 라우터
     },
@@ -146,6 +148,9 @@ export default {
       const serverBaseUrl = '';
 
       return `${serverBaseUrl}/${filename}`;
+    },
+    getImageUrl2(filename) {
+      return "/fleamarket/img/"+filename;
     },
 
   }
@@ -173,7 +178,7 @@ main{
 }
 .cardBox{
         width : 400px;
-        height: 400px;
+        height: 460px;
         /* background: gray; */
         padding : 10px;
         margin: 50px 45px;
@@ -218,9 +223,18 @@ main{
     }
 
     .card_title{
-      text-align: center;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      text-align: left;
       font-weight: bold;
       font-size: 18px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: break-word;
+      line-height: initial;
+      min-height: 47px;
+      max-height: 47px;
     }
     .card_address{
       font-weight: bold;
@@ -228,12 +242,14 @@ main{
     }
     .card_regDate{
       font-weight: bold;
-      padding: 10px 0 0 
+      padding: 10px 0 0;
+      
     }
     .card_Cnt{
-      text-align: end;
+      
       font-weight: bold;
-      padding: 10px 0 0 
+      padding: 10px 0 0;
+      font-size: 15px;
     }
 
   
@@ -259,4 +275,13 @@ main{
   border: 1px solid rgb(196, 196, 196);
 }
 
+
+/* ============================================================= */
+.blue-text {
+    color: blue;
+}
+
+.red-text {
+    color: red;
+}
 </style>

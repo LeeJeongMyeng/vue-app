@@ -14,7 +14,7 @@
                             <hr style="width: 80%;">
                             <div class="image-container">
                             <div class="image-item" v-for="item in FleaMarket_files" :key="item.post_id">
-                            <img id="cardImg" :src="getImageUrl(item.uuid_file_name)" alt="Example Image">
+                            <img id="cardImg" :src="getImageUrl2(item.uuid_file_name)" alt="Example Image" style="width: 200px; height: 200px;">
                             </div>
                             </div>
                             <hr style="width: 80%;">
@@ -210,16 +210,13 @@ export default  {
     methods:{
         //페이지 랜더링시 데이터 호출
         get_Fleamarket(){
-            console.log(this.$route.query.post_id)
             axios.get('/ctg/get_FleaMarket', {params:{post_id:this.$route.query.post_id }})
                 .then((res) => {
-                    console.log(res)
                     var FleaMarket = res.data.FleaMarket;
 
                     FleaMarket.sub_location = this.processHTML(FleaMarket.sub_location);
                     FleaMarket.title = this.processHTML(FleaMarket.title);
 
-                    console.log('adasdasda',FleaMarket)
 
                     this.FleaMarket = FleaMarket;
                     
@@ -234,7 +231,6 @@ export default  {
         },
         //수정페이지로 이동
         Go_to_uptPage() {
-           // console.log(pagename);
             this.$router.push({ name:'upt_FleaMarket', query: { post_id: this.FleaMarket.post_id } });
             //this.$router.push(pagename)
         },
@@ -244,7 +240,6 @@ export default  {
                 if(this.FleaMarket.user_id == this.$store.state.user_id){
                 axios.get('/ctg/del_FleaMarket', { params: {post_id: this.FleaMarket.post_id } })
                     .then((res) => {
-                        console.log(res)
                         alert("삭제가 완료되었습니다.");
                         this.$router.push('/');
 
@@ -259,10 +254,8 @@ export default  {
             }
         },
         //데이터 이미지 처리시에 이미지path설정
-       getImageUrl(filename) {
-            const serverBaseUrl = '';
-
-            return `${serverBaseUrl}/${filename}`;
+        getImageUrl2(filename) {
+            return "/fleamarket/img/" + filename;
         },
         
         // 모달 열기
@@ -282,8 +275,6 @@ export default  {
             };
              axios.post('/ctg/get_application_FM',data)
                 .then((res) => {
-                    console.log(res)
-                    console.log('신청자 목록가져오기')
                     this.approval_appliication_FM = res.data.approval_appliication_FM;
                     this.reject_appliication_FM = res.data.reject_appliication_FM;
                     this.wait_appliication_FM = res.data.wait_appliication_FM;
@@ -301,7 +292,6 @@ export default  {
             axios.post('/ctg/upt_application_FM', data)
                 .then((res) => {
                     //수정-> 승인갯수확인 업데이트하고 승인갯수 리턴받음
-                    console.log(res)
                     this.FleaMarket.current_count = res.data;
                     this.get_application_FM()
                     alert(state+'처리 되었습니다.')
@@ -310,7 +300,6 @@ export default  {
         },
         //신청하기
         application_FM() {
-            console.log(this.$store.state.user_id)
             //로그인 안하고 신청시
             if(!this.$store.state.user_id || this.$store.state.user_id ==''){
                 alert('로그인 이후 이용 부탁드립니다.')
@@ -329,7 +318,6 @@ export default  {
             }
             axios.get('/ctg/application_FM', { params: { post_id: this.$route.query.post_id, user_id: this.$store.state.user_id } })
                 .then((res) => {
-                    console.log(res)
                     if (res.data == 1) {
                         alert("신청 완료되었습니다.")
                     } else {
@@ -367,7 +355,7 @@ export default  {
 <style scoped>
     
      .container{
-        width: 57%;
+        width: 63%;
         margin: 0 auto;
         box-shadow: 0 0 7px gray;
     }
@@ -444,12 +432,14 @@ export default  {
       .image-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center; /* 가로 중앙 정렬 */
+  justify-content: center; /*가로 중앙 정렬 */
   align-items: center; /* 세로 중앙 정렬 */
 }
 
 .image-item {
   margin-right: 10px; 
+  /* width:10px; */
+  /* height: 10px; */
 }
 
 .font_red{

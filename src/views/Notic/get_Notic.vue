@@ -21,7 +21,7 @@
                     <th class="Notic_th">첨부파일</th>
                     <td colspan="3" class="Notic_td">
                         <div v-for="item in Notic_files" :key="item.fileno">
-                            <a href="#" @click="filedownload(item.origin_file_name,item.chg_source_filename)">{{ item.origin_file_name }}</a>
+                            <a href="#" @click="filedownload($event, item.origin_file_name, item.chg_source_filename)">{{ item.origin_file_name }}</a>
                         </div>
                     </td>
                 </tr>
@@ -80,10 +80,8 @@ export default  {
     methods:{
         //페이지 랜더링시 데이터 호출
         get_Notic(){
-            console.log(this.$route.query.notice_id)
             axios.get('/ctg/get_Notic', {params:{notice_id:this.$route.query.notice_id }})
                 .then((res) => {
-                    console.log(res)
                     this.Notic = res.data.Notic;
                     this.Notic_files = res.data.Notic_files;
                     this.decodedContent(res.data.Notic.content);
@@ -91,11 +89,8 @@ export default  {
                 .catch((err) => console.log(err))
         },
         decodedContent(value) {
-            console.log(value)
             if (value) {
                 const replacedValue = value.replace("src=&#34;/pandora3/resources/pandora3/images/upload/ckediter/", ":src=&#34;@/assets/img/Notic/");
-                //const replacedValue2 = replacedValue.replace("jpg","jpg')");
-                 console.log(replacedValue);
                  const parser = new DOMParser();
                  const decodedHtml = parser.parseFromString(replacedValue, 'text/html').body.textContent;
                 return decodedHtml;
@@ -104,7 +99,8 @@ export default  {
             return '';
         },
         
-        filedownload(originFileName, chgSourceFilename) {
+        filedownload(event,originFileName, chgSourceFilename) {
+             event.preventDefault();
             // 자바 서버로 파일 다운로드를 처리하기 위해 Axios를 사용하여 GET 요청을 보냅니다.
             axios({
                 method: 'get',
@@ -115,7 +111,6 @@ export default  {
                 }
             })
                 .then(response => {
-                    console.log(response.data)
                     //서버에서 path+file에 대해 ResponseEntity로 build값을 반환해서 url로 설정
                     const url = window.URL.createObjectURL(new Blob([response.data]));
 

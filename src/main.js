@@ -24,11 +24,9 @@ axios.defaults.baseURL='http://localhost:8081'
 //axios선수행
 axios.interceptors.request.use(
     function(config){
-        console.log(config)
         return config;
     },
     function(error){
-        console.log(error)
         return Promise.reject(error);
     },
 );
@@ -36,19 +34,11 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
     function(response){
-       // console.log("axios.interceptors.response.use : ", response);
-       //  console.log("Request method:", response.config.method);
-       //  console.log("Request URL:", response.config.url);
         return response;
     },
     function(error){
-        console.log('axios.interceptors.response : ',error.response);
       
         if(error.response && error.response.status){
-          console.log(
-            "axios.interceptors.response.use => ",
-            error.response.data.message
-          );
           if (typeof error.response.data !== "string") {
             alert(error.response.data.message);
           } else {
@@ -62,7 +52,10 @@ axios.interceptors.response.use(
                   break;
                 //인증실패(로그인 유무)
                 case 401:
-                  //alert("401에러");
+                     store.commit("setAccount", null);
+                    store.dispatch("ctl_Log_Btn", false);
+                    sessionStorage.removeItem("user_id");
+
                   break;
                 //권한없음
                 case 403:
@@ -105,38 +98,38 @@ router.beforeEach(function (to, from, next) {
   // to : 이동할 url
   // from : 현재 url
   // next : to에서 지정한 url로 이동하기 위해 꼭 호출해야 하는 함수
-  axios.get("/ctg/account_check")
-    .then((res) => {
-        console.log('axios.router.beforeEach : ',res.data)
-        if (res.data !== null && res.data !== "") {
-          store.commit("setAccount", res.data);
-        } else {
-          store.commit("setAccount", null);
-          store.dispatch("ctl_Log_Btn", false);
-          sessionStorage.removeItem("user_id");
-          Cookies.remove("token"); // 쿠키 삭제
-        }
-  })
-
+  if(store.state.user_id != null){
+    axios.get("/ctg/account_check").then((res) => {
+      if (res.data !== null && res.data !== "") {
+        store.commit("setAccount", res.data);
+        store.dispatch("ctl_Log_Btn", true);
+      }
+ });
+  }
+ 
+// 권한이 필요한 컴포넌트일경우
     const requiresAuth = to.meta.requiresAuth !== undefined ? to.meta.requiresAuth : false;
     if (requiresAuth) {
       axios.get("/ctg/check-user-bn")
         .then((response) => {
-          console.log("router beforeEach => ", response);
           if (response.data) {
             // 서버에서 true 반환 시
             next(); // 페이지 이동 허용
-          } else {
-            //next(from); // 이전 컴포넌트로 이동
           }
         })
-        
     } else {
       // 인증이 필요하지 않은 페이지인 경우 그대로 진행
       next();
     }
-        //위 if-else를 축약도 가능함
-        // store.commit("setAccount", data || null);
-  //next();
+    
+//로그인/로그아웃 페이지에 대해서 로그인 되어잇을경우 방지
+    const check_Login = to.meta.check_Login !== undefined? to.meta.check_Login : false;
+    if(check_Login){
+      if (store.state.bool) {
+        router.push({ name: "home" });
+      }else{
+        next();
+      }  
+    }
 });
 

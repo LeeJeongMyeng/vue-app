@@ -13,7 +13,6 @@ export default createStore({
   //state값을 변경하는 로직
   mutations: {
     setAccount(state, payload) {
-      console.log("mutations:", payload);
       state.user_id = payload;
       // state.bool = payload.bool;
     },
@@ -45,7 +44,6 @@ export default createStore({
   actions: {
     //state에 저장
     setAccount: function (context, payload) {
-      console.log(Context, payload);
       return context.commit("setAccount", payload);
     },
     //bool저장

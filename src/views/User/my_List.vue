@@ -90,11 +90,11 @@
                         </thead>
                     </table>
                     <div class="application_tbody" v-if="My_FleaMarket.totPage>=1">
-                    <table class="modal_application_table">
+                    <table class="modal_application_table" style="table-layout: fixed;">
                     <tbody>
                             <tr v-for="item in My_FleaMarket.fleamarketDtoList" :key="item.post_id" >
                                 <td style="width: 7%;">{{ item.rownum }}</td> 
-                                <td style="width: 51%; text-align: left; padding:5px;">{{ item.title }}</td>
+                                <td style="width: 51%; text-align: left; padding:5px; overflow:hidden; white-space : nowrap; text-overflow: ellipsis;">{{ item.title }}</td>
                                 <td style="width: 18%;">{{ item.location }}</td>
                                 <td style="width: 10%;">{{ item.current_count }}/{{ item.max_applicants }}</td>
                                 <td style="width: 10%;"><button class="application_btn reject-button"  @click="get_Detail_FM(item.post_id)">이동</button></td>
@@ -132,11 +132,11 @@
                         </thead>
                     </table>
                     <div class="application_tbody" v-if="My_Application.totPage>=1">
-                    <table class="modal_application_table">
+                    <table class="modal_application_table" style="table-layout: fixed;">
                     <tbody>
                             <tr v-for="item in My_Application.fleamarketDtoList" :key="item.post_id">
                                 <td style="width: 5%;">{{ item.rownum }}</td>
-                                <td style="width: 40%; text-align: left; padding:5px;">{{ item.title }}</td>
+                                <td style="width: 40%; text-align: left; padding:5px; overflow:hidden; white-space : nowrap; text-overflow: ellipsis;">{{ item.title }}</td>
                                 <td style="width: 20%;">{{ item.location }}</td>
                                 <td style="width: 10%;">{{ item.state }}</td>
                                 <td style="width: 10%;">{{ item.fstate }}</td>
@@ -149,11 +149,11 @@
                     <div class="application_nobody" v-else>검색 결과가 없습니다.</div>
                     <div class="pagination-container" v-if="My_Application.totPage >= 1">
                         <div>
-                            <button  @click="prev_F_Page" class="page-btn">
+                            <button  @click="prev_A_Page" class="page-btn">
                             prev
                             </button>
                             <span class="page-count">{{ this.$store.state.A_currentPage }} / {{ My_Application.totPage }}</span>
-                            <button  @click="next_F_Page" class="page-btn">
+                            <button  @click="next_A_Page" class="page-btn">
                             next
                             </button>
                         </div>
@@ -238,7 +238,6 @@ export default  {
             }
             axios.post('/ctg/get_My_Info',data)
             .then((res) =>{
-                console.log('get_My_Info',res);
                 this.My_Info = res.data
                 this.updateUserInfo.user_id = res.data.user_id;
             }).catch((error)=>{
@@ -251,7 +250,6 @@ export default  {
         get_check_user_bn(){
             Myaxios.post('/ctg/check-user-bn')
             .then((res) => {
-                console.log('권한',res)
                 this.Show_My_FleaMarket = res.data;
                 this.get_My_FleaMarket();
                 
@@ -267,7 +265,6 @@ export default  {
             }
             axios.post('/ctg/get_My_FleaMarket',data)
                 .then((res) => {
-                    console.log('get_My_FleaMarket',res)
                     this.My_FleaMarket = res.data
                 })
                 .catch((err) => console.log(err))
@@ -280,7 +277,6 @@ export default  {
             }
             axios.post('/ctg/get_My_Application', data)
                 .then((res) => {
-                    console.log('get_My_Application', res)
                     this.My_Application = res.data
                 })
                 .catch((err) => console.log(err))
@@ -301,7 +297,6 @@ export default  {
                 return false;
             } else {
                 this.$store.dispatch('Plus_F_CurrentPage');
-                console.log("nextpage", this.$store.state.F_currentPage);
                 this.get_My_FleaMarket();
             }
         },
@@ -320,12 +315,10 @@ export default  {
                 return false;
             } else {
                 this.$store.dispatch('Plus_A_CurrentPage');
-                console.log("nextpage", this.$store.state.A_currentPage);
                 this.get_My_Application();
             }
         },
         get_Detail_FM(post_id) {
-            console.log(post_id);
             //this.body.post_id
             this.$router.push({ name: 'get_FleaMarket', query: { post_id: post_id } }); //추가한 상세페이지 라우터
         },
@@ -337,7 +330,6 @@ export default  {
             }
             axios.post('/ctg/Check_Password',data)
             .then((res)=>{
-                console.log(res.data)
                 if(res.data){
                     $('#pwd_old').attr('readOnly',true);
                     this.active_css.password1 = 'active_valid';
@@ -388,12 +380,10 @@ export default  {
                 axios.post('/ctg/MyInfo_Update',data)
                 .then( ( res ) => {
 
-                    console.log(res);
                     alert('비밀번호가 변경되었습니다.')
                     location.reload();
                 }).catch( ( error )  => {
                     alert('다시 시도 부탁드립니다.')
-                    console.log(error)
 
                 })
                 //페이지 리로드
@@ -472,7 +462,6 @@ export default  {
             }
             axios.post('/ctg/MyInfo_Update', data)
             .then((res) => {
-                console.log(res)
                 alert('주소 수정이 완료 되었습니다.');
                 location.reload();
             }).catch((error) => {
@@ -491,7 +480,6 @@ export default  {
             if (Check) {
                 axios.post('/ctg/Check_Password',data)
                 .then((res) => {
-                    console.log(res.data);
                     if(res.data){
                         alert('기존 번호와 동일합니다. 다시 시도 부탁드립니다.')
                     }else{
@@ -512,7 +500,6 @@ export default  {
         update_phone2(data){
             axios.post('/ctg/MyInfo_Update',data)
             .then( ( res ) => {
-                console.log(res);
                 alert('번호가 성공적으로 수정되었습니다.')
                 location.reload();
             }).catch((error) => {
@@ -544,7 +531,6 @@ export default  {
             axios.post('/ctg/MyInfo_Update',data)
             .then((res) => {
                 
-                console.log(res);
                 alert('사업자 회원으로 등록되었습니다. 감사합니다.')
                 location.reload();
 
@@ -564,7 +550,6 @@ export default  {
             }
             axios.post('/ctg/Check_Password', data)
             .then((res) => {
-                console.log(res.data)
                 if (res.data) {
                     if (confirm('정말 삭제하시겠습니까?')) {
                         this.delMember2();
@@ -585,7 +570,6 @@ export default  {
             }
             axios.post('/ctg/delete_Member',data)
             .then((res) => {
-                console.log(res)
                 if(res.data==1){
                    this.Logout_Ctg_Member(); 
                 }
@@ -596,7 +580,6 @@ export default  {
           Logout_Ctg_Member() {
                 axios.post('/ctg/logout')
                     .then((res) => {
-                        console.log(res)
 
                         this.$store.commit('setAccount', null);
                         this.$store.dispatch('ctl_Log_Btn', false);
@@ -628,7 +611,6 @@ export default  {
             } else if (key == 'rrn') {
                 Regular_Expression = /^(?:[0-9]{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[1,2][0-9]|3[0,1]))-[1-4][0-9]{6}$/;
                 result = (value.length == 14 && (Regular_Expression.test(value)));
-                console.log(value.length + ':' + Regular_Expression.test(value));
             } else if (key == 'password') {
                 const pw = value;
                 const num = pw.search(/[0-9]/g); //숫자확인

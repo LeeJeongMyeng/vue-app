@@ -5,7 +5,6 @@ export const common = {
         axios
           .post("/ctg/logout")
           .then((res) => {
-            console.log(res);
 
             this.$store.commit("setAccount", null);
             this.$store.dispatch("ctl_Log_Btn", false);
